@@ -1,242 +1,91 @@
 /* ===== GOLD PREMIUM VARIABLES ===== */
-:root {
-    /* Gold Color Palette */
-    --gold-primary: #FFD700;
-    --gold-secondary: #FFA500;
-    --gold-accent: #FF6B00;
-    --gold-dark: #B8860B;
-    --gold-light: #FFF8DC;
-    
-    /* Luxury Gold Gradients */
-    --gradient-gold: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FF8C00 100%);
-    --gradient-gold-dark: linear-gradient(135deg, #B8860B 0%, #8B6914 100%);
-    --gradient-gold-light: linear-gradient(135deg, #FFF8DC 0%, #FFEBCD 100%);
-    
-    /* Tech Background */
-    --bg-dark: #0a0a0a;
-    --bg-darker: #050505;
-    --bg-card: #1a1a1a;
-    
-    /* Tech Colors */
-    --tech-green: #00ff00;
-    --tech-blue: #00ffff;
-    --tech-purple: #8a2be2;
-    
-    /* Font */
+:root{
+    --gold-primary:#FFD700;
+    --gold-secondary:#FFA500;
+    --gold-accent:#FF6B00;
+    --gold-dark:#B8860B;
+    --gold-light:#FFF8DC;
+
+    --gradient-gold: linear-gradient(135deg,#FFD700 0%,#FFA500 50%,#FF8C00 100%);
+    --gradient-gold-dark: linear-gradient(135deg,#B8860B 0%,#8B6914 100%);
+    --gradient-gold-light: linear-gradient(135deg,#FFF8DC 0%,#FFEBCD 100%);
+
+    --bg-dark:#0a0a0a;
+    --bg-darker:#050505;
+    --bg-card:#1a1a1a;
+
+    --tech-green:#00ff00;
+    --tech-blue:#00ffff;
+    --tech-purple:#8a2be2;
+
     --font-mono: 'Courier New', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-    
-    /* Shadows */
-    --shadow-gold: 0 0 30px rgba(255, 215, 0, 0.3);
-    --shadow-glow: 0 0 20px rgba(255, 215, 0, 0.5);
-    --shadow-3d: 0 10px 30px rgba(0, 0, 0, 0.7);
+
+    --shadow-gold: 0 0 30px rgba(255,215,0,0.28);
+    --shadow-glow: 0 0 20px rgba(255,215,0,0.45);
+    --shadow-3d: 0 10px 30px rgba(0,0,0,0.7);
 }
 
 /* ===== GLOBAL RESET ===== */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100dvh;overflow:auto;font-family:var(--font-mono);background:var(--bg-dark);color:#fff}
+
+/* ===== GLASS & BUTTONS ===== */
+.glass-gold{
+    background: rgba(26,26,26,0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border:1px solid rgba(255,215,0,0.12);
+    border-radius:12px;
+    box-shadow:var(--shadow-3d),var(--shadow-gold);
 }
 
-body {
-    font-family: var(--font-mono);
-    background: var(--bg-dark);
-    color: #ffffff;
-    min-height: 100vh;
-    line-height: 1.6;
+.btn-gold{
+    position:relative;background:var(--gradient-gold);border:none;border-radius:8px;color:#000;font-weight:600;padding:10px 18px;cursor:pointer;transition:all .2s;box-shadow:var(--shadow-3d)
+}
+.btn-gold::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.35),transparent);transition:left .6s}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:var(--shadow-3d),var(--shadow-glow)}
+.btn-gold:hover::before{left:100%}
+
+/* ===== LAYOUT ===== */
+/* We use grid in dashboard.html to keep stable 2-column layout on all screens */
+.dashboard-container-gold{display:grid;grid-template-columns:300px 1fr;gap:1.5rem;height:100dvh;padding:1.5rem;background:var(--bg-dark)}
+
+/* ===== SIDEBAR ===== */
+.sidebar-gold{width:100%;background:var(--bg-card);border-right:1px solid rgba(255,215,0,0.06);padding:1.5rem;display:flex;flex-direction:column;gap:1rem;border-radius:12px}
+.sidebar-header-gold{text-align:center}
+.sidebar-header-gold h2{background:var(--gradient-gold);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:1.4rem;font-weight:700}
+.user-info-gold{display:flex;justify-content:space-between;align-items:center;background:rgba(255,215,0,0.06);padding:10px;border-radius:8px;border:1px solid rgba(255,215,0,0.06);font-size:14px}
+
+/* ===== POINTS CARD ===== */
+.points-card-gold{background:var(--gradient-gold-dark);color:#000;border-radius:12px;padding:1rem;margin-bottom:1rem;box-shadow:var(--shadow-3d);border:1px solid rgba(255,215,0,0.12)}
+.points-value-gold{font-size:2.5rem;font-weight:800;margin:0.8rem 0}
+
+/* ===== NAV ===== */
+.sidebar-nav-gold{margin-bottom:1rem}
+.nav-item-gold{display:flex;align-items:center;gap:12px;padding:10px 12px;color:#ccc;text-decoration:none;border-radius:8px;background:rgba(255,255,255,0.02);border:1px solid transparent;font-size:14px}
+.nav-item-gold:hover{background:rgba(255,215,0,0.06);color:var(--gold-primary);transform:translateX(4px)}
+.nav-item-gold.active{background:var(--gradient-gold);color:#000;box-shadow:var(--shadow-gold);transform:translateX(4px);font-weight:600}
+
+/* ===== MAIN CONTENT ===== */
+.main-content-gold{background:var(--bg-dark);padding:1.25rem;position:relative;border-radius:12px;display:flex;flex-direction:column;min-height:0}
+.main-content-gold::before{content:'';position:absolute;inset:0;pointer-events:none;background:
+    radial-gradient(circle at 20% 80%, rgba(255,215,0,0.06) 0%, transparent 40%),
+    radial-gradient(circle at 80% 20%, rgba(255,165,0,0.04) 0%, transparent 40%)}
+
+/* ===== Make sure elements can shrink inside grid columns on small screens ===== */
+.sidebar-gold, .main-content-gold {min-height:0;}
+
+/* small size tweaks (keeps 2 columns but reduces padding/width) */
+@media (max-width: 900px){
+    .dashboard-container-gold{grid-template-columns:220px 1fr;padding:1rem;gap:1rem}
+    .sidebar-gold{padding:1rem}
+    .main-content-gold{padding:1rem}
 }
 
-/* ===== GOLD GLASS MORPHISM ===== */
-.glass-gold {
-    background: rgba(26, 26, 26, 0.8);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 215, 0, 0.2);
-    border-radius: 15px;
-    box-shadow: var(--shadow-3d), var(--shadow-gold);
+@media (max-width: 600px){
+    .dashboard-container-gold{grid-template-columns:180px 1fr;padding:0.6rem;gap:0.6rem}
+    .sidebar-gold{padding:0.6rem}
+    .main-content-gold{padding:0.6rem}
 }
 
-/* ===== GOLD 3D BUTTONS ===== */
-.btn-gold {
-    position: relative;
-    background: var(--gradient-gold);
-    border: none;
-    border-radius: 8px;
-    color: #000;
-    font-family: var(--font-mono);
-    font-weight: 600;
-    padding: 12px 24px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: var(--shadow-3d);
-    transform: translateY(0);
-    overflow: hidden;
-    font-size: 14px;
-    letter-spacing: 0.5px;
-}
-
-.btn-gold::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-    transition: left 0.6s;
-}
-
-.btn-gold:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-3d), var(--shadow-glow);
-    color: #000;
-}
-
-.btn-gold:hover::before {
-    left: 100%;
-}
-
-.btn-gold:active {
-    transform: translateY(1px);
-}
-
-/* ===== DASHBOARD LAYOUT ===== */
-.dashboard-container-gold {
-    display: flex;
-    min-height: 100vh;
-    background: var(--bg-dark);
-}
-
-/* ===== SIDEBAR GOLD ===== */
-.sidebar-gold {
-    width: 300px;
-    background: var(--bg-card);
-    border-right: 1px solid rgba(255, 215, 0, 0.1);
-    padding: 2rem;
-    display: flex;
-    flex-direction: column;
-    font-family: var(--font-mono);
-}
-
-.sidebar-header-gold {
-    margin-bottom: 2rem;
-    text-align: center;
-}
-
-.sidebar-header-gold h2 {
-    background: var(--gradient-gold);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    font-family: var(--font-mono);
-}
-
-.user-info-gold {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: rgba(255, 215, 0, 0.1);
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid rgba(255, 215, 0, 0.2);
-    font-family: var(--font-mono);
-    font-size: 14px;
-}
-
-/* ===== POINTS CARD GOLD ===== */
-.points-card-gold {
-    background: var(--gradient-gold-dark);
-    color: #000;
-    border-radius: 15px;
-    padding: 1.5rem;
-    margin-bottom: 2rem;
-    box-shadow: var(--shadow-3d), var(--shadow-gold);
-    border: 1px solid rgba(255, 215, 0, 0.3);
-    font-family: var(--font-mono);
-}
-
-.points-value-gold {
-    font-size: 2.5rem;
-    font-weight: 800;
-    margin: 1rem 0;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-    font-family: var(--font-mono);
-}
-
-.points-breakdown-gold {
-    display: flex;
-    gap: 1rem;
-    margin-top: 1rem;
-    font-size: 12px;
-}
-
-.point-source-gold {
-    flex: 1;
-    text-align: center;
-    padding: 8px;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 6px;
-    border: 1px solid rgba(255, 215, 0, 0.2);
-    font-family: var(--font-mono);
-}
-
-/* ===== NAVIGATION GOLD ===== */
-.sidebar-nav-gold {
-    margin-bottom: 2rem;
-}
-
-.nav-item-gold {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
-    color: #ccc;
-    text-decoration: none;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-    margin-bottom: 8px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid transparent;
-    font-family: var(--font-mono);
-    font-size: 14px;
-}
-
-.nav-item-gold:hover {
-    background: rgba(255, 215, 0, 0.1);
-    color: var(--gold-primary);
-    border-color: rgba(255, 215, 0, 0.3);
-    transform: translateX(5px);
-}
-
-.nav-item-gold.active {
-    background: var(--gradient-gold);
-    color: #000;
-    box-shadow: var(--shadow-gold);
-    transform: translateX(5px);
-    font-weight: 600;
-}
-
-/* ===== MAIN CONTENT GOLD ===== */
-.main-content-gold {
-    flex: 1;
-    background: var(--bg-dark);
-    padding: 2rem;
-    position: relative;
-    font-family: var(--font-mono);
-}
-
-.main-content-gold::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: 
-        radial-gradient(circle at 20% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(255, 165, 0, 0.1) 0%, transparent 50%);
-    pointer-events: none;
-}
+/* Note: we intentionally DO NOT collapse to single column. Instead we let layout scale down */
