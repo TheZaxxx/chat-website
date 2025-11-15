@@ -1,6 +1,6 @@
 class ChatManager {
     constructor() {
-        this.chatMessages = document.querySelector(".chat-messages-gold")
+        this.chatMessages = document.getElementById("chatMessages");
 
 if (!this.chatMessages) {
     alert("❌ ERROR: #chatMessages not found in DOM");
