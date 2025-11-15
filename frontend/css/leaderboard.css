@@ -422,4 +422,73 @@
 .step-premium:hover {
     border-color: rgba(255, 215, 0, 0.4) !important;
 }
+    /* ===== LEADERBOARD MOBILE FIXES ===== */
+@media (max-width: 768px) {
+    .leaderboard-container-gold {
+        padding: 0.5rem;
+    }
+    
+    .leaderboard-header-gold h1 {
+        font-size: 2rem;
+    }
+    
+    .leaderboard-tabs-gold {
+        flex-direction: column;
+        padding: 0.8rem;
+    }
+    
+    .tab-btn-gold {
+        padding: 1rem;
+        text-align: center;
+    }
+    
+    .leaderboard-item-gold {
+        padding: 1rem;
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .rank-gold {
+        margin-right: 0;
+        align-self: center;
+    }
+    
+    .user-info-leaderboard-gold {
+        text-align: center;
+    }
+    
+    .user-name-gold,
+    .user-email-gold {
+        word-wrap: break-word;
+        word-break: break-word;
+        max-width: 100%;
+    }
+    
+    .stats-grid-gold {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.8rem;
+    }
+    
+    .stat-card-gold {
+        padding: 1rem 0.5rem;
+    }
+    
+    .stat-value-gold {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-grid-gold {
+        grid-template-columns: 1fr;
+    }
+    
+    .leaderboard-header-gold h1 {
+        font-size: 1.8rem;
+    }
+    
+    .user-points-gold {
+        font-size: 1.1rem;
+    }
 }
