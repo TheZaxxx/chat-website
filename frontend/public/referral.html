@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Referral Program - AI Chat</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/referral.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>AI Assistant</h2>
+                <div class="user-info">
+                    <span id="userName">User</span>
+                    <button id="logoutBtn" class="btn-logout">Logout</button>
+                </div>
+            </div>
+            
+            <div class="sidebar-nav">
+                <a href="/dashboard.html" class="nav-item">
+                    <span>💬</span> Chat
+                </a>
+                <a href="/leaderboard.html" class="nav-item">
+                    <span>🏆</span> Leaderboard
+                </a>
+                <a href="/referral.html" class="nav-item active">
+                    <span>👥</span> Referral Program
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="referral-container">
+                <div class="referral-header">
+                    <h1>👥 Referral Program</h1>
+                    <p>Invite friends and earn bonus points!</p>
+                </div>
+
+                <div class="referral-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="totalReferrals">0</div>
+                            <div class="stat-label">Total Referrals</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🔥</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="activeReferrals">0</div>
+                            <div class="stat-label">Active This Week</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🎯</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="pointsEarned">0</div>
+                            <div class="stat-label">Points Earned</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="referral-code-section">
+                    <h3>Your Referral Code</h3>
+                    <div class="referral-code-card">
+                        <div class="referral-code" id="referralCode">LOADING...</div>
+                        <button class="btn-copy" id="copyBtn">Copy</button>
+                    </div>
+                    <p class="referral-note">Share this code with friends when they sign up!</p>
+                </div>
+
+                <div class="share-section">
+                    <h3>Share Your Link</h3>
+                    <div class="share-link">
+                        <input type="text" id="shareLink" readonly class="share-input">
+                        <button class="btn-share" id="shareBtn">Copy Link</button>
+                    </div>
+                    
+                    <div class="share-buttons">
+                        <button class="social-share" data-platform="whatsapp">📱 WhatsApp</button>
+                        <button class="social-share" data-platform="telegram">✈️ Telegram</button>
+                        <button class="social-share" data-platform="email">📧 Email</button>
+                    </div>
+                </div>
+
+                <div class="how-it-works">
+                    <h3>How It Works</h3>
+                    <div class="steps">
+                        <div class="step">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <strong>Share your referral code</strong>
+                                <p>Send your unique code to friends</p>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <strong>+2 Points on Signup</strong>
+                                <p>Get 2 points when friends join using your code</p>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <strong>+5 Points Weekly</strong>
+                                <p>Earn 5 points each week for every active referral</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/referral.js"></script>
+</body>
+</html>
