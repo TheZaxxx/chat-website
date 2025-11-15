@@ -7,10 +7,10 @@ require('dotenv').config();
 
 const app = express();
 
-// In-memory database (sementara)
+// In-memory database
 let users = [];
 let checkIns = [];
-let chatSessions = [];
+let nextUserId = 1;
 
 // Middleware
 app.use(cors());
@@ -33,7 +33,7 @@ app.post('/api/auth/register', async (req, res) => {
         
         // Create user
         const user = {
-            id: users.length + 1,
+            id: nextUserId++,
             email,
             password: hashedPassword,
             name,
@@ -56,6 +56,7 @@ app.post('/api/auth/register', async (req, res) => {
         });
         
     } catch (error) {
+        console.error('Register error:', error);
         res.status(500).json({ error: 'Server error' });
     }
 });
@@ -90,11 +91,28 @@ app.post('/api/auth/login', async (req, res) => {
         });
         
     } catch (error) {
+        console.error('Login error:', error);
         res.status(500).json({ error: 'Server error' });
     }
 });
 
-// Chat Routes
+// Middleware untuk verify token
+const authMiddleware = (req, res, next) => {
+    try {
+        const token = req.header('Authorization')?.replace('Bearer ', '');
+        if (!token) {
+            return res.status(401).json({ error: 'No token provided' });
+        }
+        
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret');
+        req.userId = decoded.userId;
+        next();
+    } catch (error) {
+        res.status(401).json({ error: 'Invalid token' });
+    }
+};
+
+// Chat Routes dengan daily check-in protection
 app.post('/api/chat/check-in', authMiddleware, (req, res) => {
     try {
         const userId = req.userId;
@@ -159,48 +177,6 @@ app.post('/api/chat/check-in', authMiddleware, (req, res) => {
     }
 });
 
-app.get('/api/chat/points', (req, res) => {
-    try {
-        const token = req.header('Authorization')?.replace('Bearer ', '');
-        if (!token) {
-            return res.status(401).json({ error: 'No token' });
-        }
-        
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret');
-        const userId = decoded.userId;
-        
-        // Calculate total points
-        const userCheckIns = checkIns.filter(checkIn => checkIn.userId === userId);
-        const totalPoints = userCheckIns.reduce((sum, checkIn) => sum + checkIn.pointsEarned, 0);
-        
-        res.json({ totalPoints });
-    } catch (error) {
-        res.status(401).json({ error: 'Invalid token' });
-    }
-});
-
-// Serve Frontend
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/public/index.html'));
-});
-
-app.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/public/login.html'));
-});
-
-app.get('/register', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/public/register.html'));
-});
-
-app.get('/dashboard.html', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/public/dashboard.html'));
-});
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-    console.log(`📧 Using in-memory database (data will reset on server restart)`);
-});
 // Check today's check-in status
 app.get('/api/chat/today-status', authMiddleware, (req, res) => {
     try {
@@ -220,4 +196,48 @@ app.get('/api/chat/today-status', authMiddleware, (req, res) => {
         console.error('Today status error:', error);
         res.status(500).json({ error: 'Server error' });
     }
+});
+
+app.get('/api/chat/points', authMiddleware, (req, res) => {
+    try {
+        const userId = req.userId;
+        
+        // Calculate total points
+        const userCheckIns = checkIns.filter(checkIn => checkIn.userId === userId);
+        const totalPoints = userCheckIns.reduce((sum, checkIn) => sum + checkIn.pointsEarned, 0);
+        
+        res.json({ totalPoints });
+    } catch (error) {
+        console.error('Points error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// Serve Frontend Pages
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/public/index.html'));
+});
+
+app.get('/login', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/public/login.html'));
+});
+
+app.get('/register', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/public/register.html'));
+});
+
+app.get('/dashboard.html', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/public/dashboard.html'));
+});
+
+// Handle 404
+app.use('*', (req, res) => {
+    res.status(404).send('Page not found');
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`📍 Access: http://localhost:${PORT}`);
+    console.log(`📧 Using in-memory database`);
 });
