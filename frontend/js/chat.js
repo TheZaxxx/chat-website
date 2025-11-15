@@ -217,4 +217,13 @@ if (!this.chatMessages) {
     }
 }
 
-document.addEventListener("DOMContentLoaded", () => new ChatManager());
+function waitForChatContainer() {
+    const el = document.querySelector(".chat-messages-gold");
+    if (!el) {
+        console.log("⏳ Waiting for DOM...");
+        return setTimeout(waitForChatContainer, 100);
+    }
+    console.log("✅ Chat container detected");
+    new ChatManager();
+}
+waitForChatContainer();
