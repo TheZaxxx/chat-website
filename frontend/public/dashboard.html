@@ -6,6 +6,170 @@
     <title>AI Chat | Gold Tech</title>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/chat.css">
+    <style>
+        /* ===== MOBILE CHAT HEIGHT FIX ===== */
+        @media (max-width: 768px) {
+            .dashboard-container-gold {
+                flex-direction: column;
+                height: 100vh;
+                overflow: hidden;
+            }
+            
+            .sidebar-gold {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+                padding: 1rem;
+                flex-shrink: 0;
+            }
+            
+            .main-content-gold {
+                flex: 1;
+                padding: 0;
+                height: calc(100vh - 200px);
+                min-height: 0;
+            }
+            
+            .chat-container-gold {
+                height: 100%;
+                max-width: 100%;
+                margin: 0;
+                border-radius: 0;
+                border: none;
+                border-top: 1px solid rgba(255, 215, 0, 0.2);
+            }
+            
+            .chat-header-gold {
+                padding: 1rem;
+            }
+            
+            .chat-header-gold h1 {
+                font-size: 1.3rem;
+            }
+            
+            .chat-header-gold p {
+                font-size: 0.8rem;
+            }
+            
+            .chat-messages-gold {
+                max-height: none;
+                height: calc(100% - 140px);
+                padding: 1rem;
+                flex: 1;
+                min-height: 0;
+            }
+            
+            .chat-input-container-gold {
+                padding: 1rem;
+                position: sticky;
+                bottom: 0;
+                background: var(--bg-card);
+                border-top: 1px solid rgba(255, 215, 0, 0.1);
+            }
+            
+            .input-group-gold {
+                gap: 0.8rem;
+            }
+            
+            #messageInput {
+                min-height: 45px;
+                font-size: 14px;
+            }
+            
+            .btn-send-gold {
+                min-width: 45px;
+                min-height: 45px;
+            }
+            
+            .chat-tips-gold {
+                font-size: 11px;
+                padding: 6px;
+                margin-top: 0.8rem;
+            }
+            
+            .message-gold {
+                max-width: 85%;
+            }
+            
+            .message-content-gold {
+                padding: 10px 12px;
+                font-size: 13px;
+            }
+            
+            .message-time-gold {
+                font-size: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-content-gold {
+                height: calc(100vh - 180px);
+            }
+            
+            .chat-messages-gold {
+                height: calc(100% - 130px);
+                padding: 0.8rem;
+            }
+            
+            .chat-header-gold {
+                padding: 0.8rem;
+            }
+            
+            .chat-header-gold h1 {
+                font-size: 1.2rem;
+            }
+            
+            .message-gold {
+                max-width: 90%;
+            }
+            
+            .sidebar-gold {
+                padding: 0.8rem;
+            }
+            
+            .user-info-gold {
+                padding: 6px 10px;
+                font-size: 11px;
+            }
+            
+            .nav-item-gold {
+                padding: 6px 10px;
+                font-size: 11px;
+            }
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .dashboard-container-gold {
+            height: 100vh;
+        }
+
+        .chat-container-gold {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .chat-messages-gold {
+            flex: 1;
+            overflow-y: auto;
+            min-height: 0;
+        }
+
+        .main-content-gold {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-container-gold {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
 </head>
 <body>
     <div class="dashboard-container-gold">
