@@ -215,15 +215,16 @@ if (!this.chatMessages) {
     getCurrentTime() {
         return new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: false });
     }
+// === ENSURE DOM + ELEMENT EXISTS BEFORE RUNNING CHAT ===
+function initChat() {
+    const container = document.getElementById("chatMessages");
+    if (!container) {
+        console.warn("⏳ Waiting for #chatMessages...");
+        return setTimeout(initChat, 150);
+    }
+
+    console.log("✅ Chat container loaded.");
+    window.chat = new ChatManager();
 }
 
-function waitForChatContainer() {
-    const el = document.querySelector(".chat-messages-gold");
-    if (!el) {
-        console.log("⏳ Waiting for DOM...");
-        return setTimeout(waitForChatContainer, 100);
-    }
-    console.log("✅ Chat container detected");
-    new ChatManager();
-}
-waitForChatContainer();
+document.addEventListener("DOMContentLoaded", initChat);
