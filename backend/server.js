@@ -201,3 +201,23 @@ app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
     console.log(`📧 Using in-memory database (data will reset on server restart)`);
 });
+// Check today's check-in status
+app.get('/api/chat/today-status', authMiddleware, (req, res) => {
+    try {
+        const userId = req.userId;
+        const today = new Date().toDateString();
+        
+        const alreadyCheckedIn = checkIns.find(checkIn => {
+            const checkInDate = new Date(checkIn.checkInTime).toDateString();
+            return checkIn.userId === userId && checkInDate === today;
+        });
+        
+        res.json({ 
+            checkedInToday: !!alreadyCheckedIn,
+            checkInTime: alreadyCheckedIn ? alreadyCheckedIn.checkInTime : null
+        });
+    } catch (error) {
+        console.error('Today status error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
