@@ -3,8 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - AI Chat</title>
+    <title>Register | Gold AI Chat</title>
     <style>
+        /* ===== GOLD REGISTER STYLES ===== */
+        :root {
+            --gold-primary: #FFD700;
+            --gold-secondary: #FFA500;
+            --gradient-gold: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FF8C00 100%);
+            --bg-dark: #0a0a0a;
+            --bg-card: #1a1a1a;
+            --font-mono: 'Courier New', 'Monaco', 'Menlo', monospace;
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -12,8 +22,9 @@
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: var(--font-mono);
+            background: var(--bg-dark);
+            color: #ffffff;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -21,142 +32,261 @@
             padding: 20px;
         }
         
-        .auth-container {
+        .auth-container-gold {
             width: 100%;
             max-width: 400px;
         }
         
-        .auth-card {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        .auth-card-gold {
+            background: var(--bg-card);
+            padding: 2.5rem 2rem;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), 0 0 20px rgba(255, 215, 0, 0.2);
+            position: relative;
+            overflow: hidden;
         }
         
-        .auth-header {
+        .auth-card-gold::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-gold);
+        }
+        
+        .auth-header-gold {
             text-align: center;
             margin-bottom: 2rem;
         }
         
-        .auth-header h2 {
-            color: #333;
+        .auth-header-gold h2 {
+            background: var(--gradient-gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 1.8rem;
+            font-weight: 700;
             margin-bottom: 0.5rem;
         }
         
-        .auth-header p {
-            color: #666;
+        .auth-header-gold p {
+            color: #888;
+            font-size: 14px;
         }
         
-        .form-group {
+        .form-group-gold {
             margin-bottom: 1.5rem;
         }
         
-        label {
+        .form-group-gold label {
             display: block;
             margin-bottom: 0.5rem;
-            color: #333;
+            color: #ccc;
             font-weight: 600;
+            font-size: 14px;
         }
         
-        input {
+        .form-group-gold input {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 6px;
-            font-size: 16px;
-            transition: border-color 0.3s ease;
+            padding: 12px 16px;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 8px;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-family: var(--font-mono);
+            transition: all 0.3s ease;
         }
         
-        input:focus {
+        .form-group-gold input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.2);
+            background: rgba(255, 255, 255, 0.15);
         }
         
-        .btn {
+        .form-group-gold input::placeholder {
+            color: #666;
+        }
+        
+        .btn-gold {
             width: 100%;
-            padding: 12px;
-            background: #667eea;
-            color: white;
+            padding: 14px;
+            background: var(--gradient-gold);
+            color: #000;
             border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: 600;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
             cursor: pointer;
-            transition: background 0.3s ease;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            font-family: var(--font-mono);
+            position: relative;
+            overflow: hidden;
         }
         
-        .btn:hover {
-            background: #5a6fd8;
+        .btn-gold::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.6s;
         }
         
-        .auth-footer {
+        .btn-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 215, 0, 0.4);
+        }
+        
+        .btn-gold:hover::before {
+            left: 100%;
+        }
+        
+        .btn-gold:active {
+            transform: translateY(1px);
+        }
+        
+        .auth-footer-gold {
             text-align: center;
             margin-top: 1.5rem;
-            padding-top: 1rem;
-            border-top: 1px solid #eee;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 215, 0, 0.2);
         }
         
-        .auth-footer a {
-            color: #667eea;
+        .auth-footer-gold a {
+            color: var(--gold-primary);
             text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
         }
         
-        .auth-footer a:hover {
-            text-decoration: underline;
+        .auth-footer-gold a:hover {
+            color: #fff;
         }
         
-        .error-message {
-            background: #fee;
-            color: #c33;
-            padding: 10px;
-            border-radius: 6px;
-            margin-bottom: 1rem;
+        .auth-footer-gold p {
+            margin-bottom: 0.5rem;
+            color: #888;
             font-size: 14px;
         }
         
-        .success-message {
-            background: #efe;
-            color: #363;
-            padding: 10px;
-            border-radius: 6px;
+        .error-message-gold {
+            background: rgba(220, 38, 38, 0.2);
+            color: #fca5a5;
+            padding: 12px;
+            border-radius: 8px;
             margin-bottom: 1rem;
             font-size: 14px;
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            text-align: center;
+        }
+        
+        .success-message-gold {
+            background: rgba(34, 197, 94, 0.2);
+            color: #86efac;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 14px;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            text-align: center;
+        }
+        
+        .logo-gold {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .logo-gold h1 {
+            background: var(--gradient-gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+        
+        .logo-gold .subtitle {
+            color: #888;
+            font-size: 14px;
+            letter-spacing: 2px;
+        }
+        
+        .referral-section-gold {
+            background: rgba(255, 215, 0, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            margin-bottom: 1.5rem;
+        }
+        
+        .referral-section-gold label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--gold-primary);
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .referral-note-gold {
+            font-size: 12px;
+            color: #888;
+            margin-top: 0.5rem;
         }
     </style>
 </head>
 <body>
-    <div class="auth-container">
-        <div class="auth-card">
-            <div class="auth-header">
-                <h2>Create Account</h2>
-                <p>Join our AI chat community</p>
+    <div class="auth-container-gold">
+        <div class="logo-gold">
+            <h1>AI_CHAT</h1>
+            <div class="subtitle">GOLD_EDITION</div>
+        </div>
+        
+        <div class="auth-card-gold">
+            <div class="auth-header-gold">
+                <h2>CREATE_ACCOUNT</h2>
+                <p>JOIN_AI_CHAT_NETWORK</p>
             </div>
             
-            <form id="registerForm" class="auth-form">
-                <div id="errorMessage" class="error-message" style="display: none;"></div>
-                <div id="successMessage" class="success-message" style="display: none;"></div>
+            <form id="registerForm" class="auth-form-gold">
+                <div id="errorMessage" class="error-message-gold" style="display: none;"></div>
+                <div id="successMessage" class="success-message-gold" style="display: none;"></div>
                 
-                <div class="form-group">
-                    <label for="name">Full Name</label>
-                    <input type="text" id="name" name="name" required>
+                <div class="form-group-gold">
+                    <label for="name">FULL_NAME</label>
+                    <input type="text" id="name" name="name" required placeholder="John Doe">
                 </div>
                 
-                <div class="form-group">
-                    <label for="email">Email Address</label>
-                    <input type="email" id="email" name="email" required>
+                <div class="form-group-gold">
+                    <label for="email">EMAIL_ADDRESS</label>
+                    <input type="email" id="email" name="email" required placeholder="user@domain.com">
                 </div>
                 
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required minlength="6">
+                <div class="form-group-gold">
+                    <label for="password">PASSWORD</label>
+                    <input type="password" id="password" name="password" required minlength="6" placeholder="••••••••">
                 </div>
                 
-                <button type="submit" class="btn">Create Account</button>
+                <div class="referral-section-gold">
+                    <label for="referralCode">REFERRAL_CODE (OPTIONAL)</label>
+                    <input type="text" id="referralCode" name="referralCode" placeholder="ENTER_REFERRAL_CODE">
+                    <div class="referral-note-gold">GET_2_POINTS_BONUS_FOR_REFERRAL</div>
+                </div>
+                
+                <button type="submit" class="btn-gold">CREATE_ACCOUNT</button>
             </form>
             
-            <div class="auth-footer">
-                <p>Already have an account? <a href="/login">Sign in here</a></p>
-                <p><a href="/">← Back to Home</a></p>
+            <div class="auth-footer-gold">
+                <p>HAVE_ACCOUNT? <a href="/login">LOGIN_HERE</a></p>
+                <p><a href="/">← BACK_TO_HOME</a></p>
             </div>
         </div>
     </div>
@@ -168,6 +298,7 @@
             const name = document.getElementById('name').value;
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
+            const referralCode = document.getElementById('referralCode').value;
             const errorDiv = document.getElementById('errorMessage');
             const successDiv = document.getElementById('successMessage');
             const submitBtn = e.target.querySelector('button');
@@ -176,7 +307,7 @@
             errorDiv.style.display = 'none';
             successDiv.style.display = 'none';
             submitBtn.disabled = true;
-            submitBtn.textContent = 'Creating account...';
+            submitBtn.textContent = 'CREATING_ACCOUNT...';
             
             try {
                 const response = await fetch('/api/auth/register', {
@@ -184,13 +315,13 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ name, email, password })
+                    body: JSON.stringify({ name, email, password, referralCode })
                 });
                 
                 const data = await response.json();
                 
                 if (response.ok) {
-                    successDiv.textContent = 'Account created successfully! Redirecting...';
+                    successDiv.textContent = 'ACCOUNT_CREATED_SUCCESSFULLY! REDIRECTING...';
                     successDiv.style.display = 'block';
                     
                     // Store token and user data
@@ -202,14 +333,14 @@
                         window.location.href = '/dashboard.html';
                     }, 1000);
                 } else {
-                    throw new Error(data.error || 'Registration failed');
+                    throw new Error(data.error || 'REGISTRATION_FAILED');
                 }
             } catch (error) {
                 errorDiv.textContent = error.message;
                 errorDiv.style.display = 'block';
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.textContent = 'Create Account';
+                submitBtn.textContent = 'CREATE_ACCOUNT';
             }
         });
     </script>
