@@ -485,4 +485,185 @@
 .step-premium:hover {
     border-color: rgba(255, 215, 0, 0.4) !important;
 }
+    /* ===== MOBILE RESPONSIVE FIXES ===== */
+@media (max-width: 768px) {
+    .dashboard-container-gold {
+        flex-direction: column;
+    }
+    
+    .sidebar-gold {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+    }
+    
+    .main-content-gold {
+        padding: 1rem;
+    }
+    
+    /* Referral Mobile Fixes */
+    .referral-stats-gold {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .stat-card-large-gold {
+        padding: 1.5rem 1rem;
+        gap: 1rem;
+    }
+    
+    .stat-icon-gold {
+        width: 50px;
+        height: 50px;
+        font-size: 2rem;
+    }
+    
+    .stat-value-large-gold {
+        font-size: 1.5rem;
+    }
+    
+    .referral-code-section-gold,
+    .share-section-gold,
+    .how-it-works-gold {
+        padding: 1.5rem 1rem;
+        margin: 1rem 0;
+    }
+    
+    .referral-code-card-gold {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .referral-code-gold {
+        font-size: 1.2rem;
+        padding: 1rem;
+        letter-spacing: 2px;
+        word-break: break-all;
+        text-align: center;
+        max-width: 100%;
+        overflow: hidden;
+    }
+    
+    .share-link-gold {
+        flex-direction: column;
+    }
+    
+    .share-input-gold {
+        min-width: auto;
+        font-size: 14px;
+        padding: 12px;
+    }
+    
+    .share-buttons-gold {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+    }
+    
+    .social-share-gold {
+        padding: 1rem 0.5rem;
+        font-size: 12px;
+    }
+    
+    /* Text Overflow Fixes */
+    .step-gold {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+        padding: 1rem;
+    }
+    
+    .step-content-gold strong,
+    .step-content-gold p {
+        word-wrap: break-word;
+        word-break: break-word;
+        overflow-wrap: break-word;
+        hyphens: auto;
+    }
+    
+    .step-content-gold strong {
+        font-size: 1rem;
+        line-height: 1.3;
+    }
+    
+    .step-content-gold p {
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+    
+    .bonus-highlight-gold {
+        font-size: 0.7rem;
+        padding: 0.3rem 0.8rem;
+    }
+    
+    /* Header Mobile Fix */
+    .referral-header-gold h1 {
+        font-size: 2rem;
+    }
+    
+    .referral-header-gold p {
+        font-size: 1rem;
+    }
+}
+
+/* ===== EXTRA SMALL DEVICES ===== */
+@media (max-width: 480px) {
+    .main-content-gold {
+        padding: 0.5rem;
+    }
+    
+    .referral-container-gold {
+        padding: 0.5rem;
+    }
+    
+    .referral-header-gold h1 {
+        font-size: 1.8rem;
+    }
+    
+    .stat-value-large-gold {
+        font-size: 1.3rem;
+    }
+    
+    .referral-code-gold {
+        font-size: 1rem;
+        padding: 0.8rem;
+    }
+    
+    .share-buttons-gold {
+        grid-template-columns: 1fr;
+    }
+    
+    .step-number-gold {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+}
+
+/* ===== GLOBAL TEXT OVERFLOW FIX ===== */
+.step-content-gold strong,
+.step-content-gold p,
+.referral-note-gold,
+.stat-label-large-gold,
+.user-name-gold,
+.user-email-gold {
+    word-wrap: break-word !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    hyphens: auto !important;
+    max-width: 100% !important;
+}
+
+/* Force text to wrap properly */
+* {
+    box-sizing: border-box;
+    max-width: 100%;
+}
+
+/* Ensure all text containers handle overflow */
+.step-content-gold,
+.stat-info-gold,
+.user-info-leaderboard-gold {
+    min-width: 0; /* Important for flexbox text overflow */
+    overflow: hidden;
+   }
 }
