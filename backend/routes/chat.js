@@ -48,5 +48,20 @@ router.get('/points', auth, (req, res) => {
         }
     );
 });
+// Add this route to check whether user already checked in today
+router.get('/today-status', auth, (req, res) => {
+    const userId = req.userId;
+
+    // If your check_ins table has a created_at DATETIME column (recommended)
+    // this SQL checks if there's any check_in for today (localtime)
+    db.get(
+        "SELECT COUNT(*) as c FROM check_ins WHERE user_id = ? AND DATE(created_at) = DATE('now','localtime')",
+        [userId],
+        (err, row) => {
+            if (err) return res.status(500).json({ error: 'Database error' });
+            res.json({ checkedInToday: (row.c && row.c > 0) ? true : false });
+        }
+    );
+});
 
 module.exports = router;
