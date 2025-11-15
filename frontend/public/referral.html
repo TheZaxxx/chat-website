@@ -3,121 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Referral Program - AI Chat</title>
+    <title>Referral Program | Premium AI Chat</title>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/referral.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="dashboard-container">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="sidebar-header">
-                <h2>AI Assistant</h2>
-                <div class="user-info">
+    <div class="dashboard-container-premium">
+        <!-- Premium Sidebar -->
+        <div class="sidebar-premium">
+            <div class="sidebar-header-premium">
+                <h2>🤖 AI Assistant</h2>
+                <div class="user-info-premium">
                     <span id="userName">User</span>
-                    <button id="logoutBtn" class="btn-logout">Logout</button>
+                    <button id="logoutBtn" class="btn-3d" style="padding: 8px 16px; font-size: 0.875rem;">Logout</button>
                 </div>
             </div>
             
-            <div class="sidebar-nav">
-                <a href="/dashboard.html" class="nav-item">
-                    <span>💬</span> Chat
+            <div class="sidebar-nav-premium">
+                <a href="/dashboard.html" class="nav-item-premium">
+                    <span>💬</span> AI Chat
                 </a>
-                <a href="/leaderboard.html" class="nav-item">
+                <a href="/leaderboard.html" class="nav-item-premium">
                     <span>🏆</span> Leaderboard
                 </a>
-                <a href="/referral.html" class="nav-item active">
+                <a href="/referral.html" class="nav-item-premium active">
                     <span>👥</span> Referral Program
+                </a>
+                <a href="/history.html" class="nav-item-premium">
+                    <span>📚</span> Chat History
                 </a>
             </div>
         </div>
 
-        <!-- Main Content -->
-        <div class="main-content">
-            <div class="referral-container">
-                <div class="referral-header">
-                    <h1>👥 Referral Program</h1>
-                    <p>Invite friends and earn bonus points!</p>
+        <!-- Premium Main Content -->
+        <div class="main-content-premium">
+            <div class="referral-container-premium">
+                <div class="referral-header-premium">
+                    <h1>👥 Referral Empire</h1>
+                    <p>Build your network and dominate the leaderboard! 💎</p>
                 </div>
 
-                <div class="referral-stats">
-                    <div class="stat-card">
-                        <div class="stat-icon">👥</div>
-                        <div class="stat-info">
-                            <div class="stat-value" id="totalReferrals">0</div>
-                            <div class="stat-label">Total Referrals</div>
+                <div class="referral-stats-premium">
+                    <div class="stat-card-premium-large">
+                        <div class="stat-icon-premium">👥</div>
+                        <div class="stat-info-premium">
+                            <div class="stat-value-premium-large" id="totalReferrals">0</div>
+                            <div class="stat-label-premium-large">Total Referrals</div>
                         </div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">🔥</div>
-                        <div class="stat-info">
-                            <div class="stat-value" id="activeReferrals">0</div>
-                            <div class="stat-label">Active This Week</div>
+                    <div class="stat-card-premium-large">
+                        <div class="stat-icon-premium">🔥</div>
+                        <div class="stat-info-premium">
+                            <div class="stat-value-premium-large" id="activeReferrals">0</div>
+                            <div class="stat-label-premium-large">Active This Week</div>
                         </div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">🎯</div>
-                        <div class="stat-info">
-                            <div class="stat-value" id="pointsEarned">0</div>
-                            <div class="stat-label">Points Earned</div>
+                    <div class="stat-card-premium-large">
+                        <div class="stat-icon-premium">🎯</div>
+                        <div class="stat-info-premium">
+                            <div class="stat-value-premium-large" id="pointsEarned">0</div>
+                            <div class="stat-label-premium-large">Points Earned</div>
                         </div>
                     </div>
                 </div>
 
-                <div class="referral-code-section">
-                    <h3>Your Referral Code</h3>
-                    <div class="referral-code-card">
-                        <div class="referral-code" id="referralCode">LOADING...</div>
-                        <button class="btn-copy" id="copyBtn">Copy</button>
+                <div class="referral-code-section-premium">
+                    <h3>Your Elite Referral Code</h3>
+                    <div class="referral-code-card-premium">
+                        <div class="referral-code-premium" id="referralCode">LOADING...</div>
+                        <button class="btn-copy-premium" id="copyBtn">
+                            📋 Copy Code
+                        </button>
                     </div>
-                    <p class="referral-note">Share this code with friends when they sign up!</p>
+                    <p class="referral-note-premium">Share this exclusive code with friends to unlock bonus points! ✨</p>
                 </div>
 
-                <div class="share-section">
-                    <h3>Share Your Link</h3>
-                    <div class="share-link">
-                        <input type="text" id="shareLink" readonly class="share-input">
-                        <button class="btn-share" id="shareBtn">Copy Link</button>
+                <div class="share-section-premium">
+                    <h3>Spread The Word</h3>
+                    <div class="share-link-premium">
+                        <input type="text" id="shareLink" readonly class="share-input-premium">
+                        <button class="btn-share-premium" id="shareBtn">🔗 Copy Link</button>
                     </div>
                     
-                    <div class="share-buttons">
-                        <button class="social-share" data-platform="whatsapp">📱 WhatsApp</button>
-                        <button class="social-share" data-platform="telegram">✈️ Telegram</button>
-                        <button class="social-share" data-platform="email">📧 Email</button>
+                    <div class="share-buttons-premium">
+                        <button class="social-share-premium" data-platform="whatsapp">📱 WhatsApp</button>
+                        <button class="social-share-premium" data-platform="telegram">✈️ Telegram</button>
+                        <button class="social-share-premium" data-platform="email">📧 Email</button>
+                        <button class="social-share-premium" data-platform="twitter">🐦 Twitter</button>
                     </div>
                 </div>
 
-                <div class="how-it-works">
-                    <h3>How It Works</h3>
-                    <div class="steps">
-                        <div class="step">
-                            <div class="step-number">1</div>
-                            <div class="step-content">
-                                <strong>Share your referral code</strong>
-                                <p>Send your unique code to friends</p>
+                <div class="how-it-works-premium">
+                    <h3>How To Build Your Empire</h3>
+                    <div class="steps-premium">
+                        <div class="step-premium">
+                            <div class="step-number-premium">1</div>
+                            <div class="step-content-premium">
+                                <strong>Share Your Exclusive Code</strong>
+                                <p>Distribute your unique referral code to friends and colleagues</p>
+                                <span class="bonus-highlight">Unique to you</span>
                             </div>
                         </div>
-                        <div class="step">
-                            <div class="step-number">2</div>
-                            <div class="step-content">
-                                <strong>+2 Points on Signup</strong>
-                                <p>Get 2 points when friends join using your code</p>
-                            </div>
-                        </div>
-                        <div class="step">
-                            <div class="step-number">3</div>
-                            <div class="step-content">
-                                <strong>+5 Points Weekly</strong>
-                                <p>Earn 5 points each week for every active referral</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="../js/api.js"></script>
-    <script src="../js/referral.js"></script>
-</body>
-</html>
+                        <div class="step-premium">
+                            <div class
