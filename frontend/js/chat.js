@@ -6,18 +6,17 @@ class ChatManager {
         this.pointsValue = document.getElementById('pointsValue');
         this.userName = document.getElementById('userName');
         this.logoutBtn = document.getElementById('logoutBtn');
-        
+
+        this.baseSpeed = 18;  // min speed
+        this.maxSpeed = 45;   // max speed
+        this.punctuationDelay = 250; // extra wait after punctuation
         this.init();
     }
 
     init() {
-        // Check authentication
         const token = localStorage.getItem('authToken');
-        if (!token) {
-            window.location.href = '/login';
-            return;
-        }
-        
+        if (!token) return (window.location.href = '/login');
+
         this.loadUserData();
         this.setupEventListeners();
         this.loadPoints();
@@ -27,210 +26,185 @@ class ChatManager {
     setupEventListeners() {
         this.chatForm.addEventListener('submit', (e) => this.handleSendMessage(e));
         this.logoutBtn.addEventListener('click', () => this.handleLogout());
-        
-        // Auto-resize input
-        this.messageInput.addEventListener('input', () => {
-            this.messageInput.style.height = 'auto';
-            this.messageInput.style.height = Math.min(this.messageInput.scrollHeight, 120) + 'px';
-        });
     }
 
-    loadUserData() {
-        try {
-            const userData = localStorage.getItem('userData');
-            if (userData) {
-                const user = JSON.parse(userData);
-                this.userName.textContent = user.name;
+    // ===========================
+    // TYPING / STREAMING EFFECT
+    // ===========================
+    async streamText(element, text) {
+        element.innerHTML = `<strong>AI Assistant:</strong> `;
+        const cursor = document.createElement("span");
+        cursor.className = "cursor";
+        cursor.textContent = "█";
+        element.appendChild(cursor);
+
+        let output = "";
+        for (let i = 0; i < text.length; i++) {
+            const char = text[i];
+            const delay = this.baseSpeed + Math.random() * (this.maxSpeed - this.baseSpeed);
+
+            output += char;
+            element.innerHTML = `<strong>AI Assistant:</strong> ${output}`;
+            element.appendChild(cursor);
+
+            // extra delay after punctuation
+            if (".!?,".includes(char)) {
+                await this.sleep(this.punctuationDelay);
+            } else {
+                await this.sleep(delay);
             }
-        } catch (error) {
-            console.error('Error loading user data:', error);
+
+            this.scrollToBottom();
         }
+
+        cursor.remove();
+    }
+
+    sleep(ms) {
+        return new Promise(res => setTimeout(res, ms));
+    }
+
+    // ===========================
+    // ADD MESSAGES
+    // ===========================
+    async typewriterMessage(text) {
+        const wrapper = document.createElement("div");
+        wrapper.className = "message ai-message";
+
+        const content = document.createElement("div");
+        content.className = "message-content";
+        wrapper.appendChild(content);
+
+        this.chatMessages.appendChild(wrapper);
+        this.scrollToBottom();
+
+        await this.streamText(content, text);
+
+        const time = document.createElement("div");
+        time.className = "message-time";
+        time.textContent = this.getCurrentTime();
+        wrapper.appendChild(time);
+
+        this.scrollToBottom();
+    }
+
+    addMessage(content, sender) {
+        const wrapper = document.createElement("div");
+        wrapper.className = `message ${sender}-message`;
+
+        const msg = document.createElement("div");
+        msg.className = "message-content";
+        msg.textContent = content;
+
+        const time = document.createElement("div");
+        time.className = "message-time";
+        time.textContent = this.getCurrentTime();
+
+        wrapper.appendChild(msg);
+        wrapper.appendChild(time);
+        this.chatMessages.appendChild(wrapper);
+
+        this.scrollToBottom();
+    }
+
+    showTypingIndicator() {
+        const el = document.createElement("div");
+        el.id = "typingIndicator";
+        el.className = "message ai-message";
+        el.innerHTML = `<div class="message-content"><strong>AI Assistant:</strong> <span class="typingdots">...</span></div>`;
+        this.chatMessages.appendChild(el);
+        this.scrollToBottom();
+    }
+
+    removeTypingIndicator() {
+        const el = document.getElementById("typingIndicator");
+        if (el) el.remove();
     }
 
     async handleSendMessage(e) {
         e.preventDefault();
-        
-        const message = this.messageInput.value.trim();
-        if (!message) return;
+        const msg = this.messageInput.value.trim();
+        if (!msg) return;
 
-        // Add user message to chat
-        this.addMessage(message, 'user');
-        this.messageInput.value = '';
-        this.messageInput.style.height = 'auto';
+        this.addMessage(msg, "user");
+        this.messageInput.value = "";
 
-        // Show loading indicator
-        const loadingId = this.showLoading();
+        this.showTypingIndicator();
 
         try {
-            const token = localStorage.getItem('authToken');
-            const response = await fetch('/api/chat/check-in', {
-                method: 'POST',
+            const res = await fetch("/api/chat/check-in", {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${localStorage.getItem("authToken")}`
                 },
-                body: JSON.stringify({ message })
+                body: JSON.stringify({ message: msg })
             });
-            
-            const data = await response.json();
-            
-            // Remove loading indicator
-            this.removeLoading(loadingId);
-            
-            if (response.ok) {
-                // Add AI response
-                this.addMessage(data.response, 'ai');
-                
-                // Update points if check-in was successful
-                if (data.checkedIn) {
-                    await this.loadPoints();
-                }
+
+            const data = await res.json();
+            this.removeTypingIndicator();
+
+            if (res.ok) {
+                await this.typewriterMessage(data.response);
+                if (data.checkedIn) this.loadPoints();
             } else {
-                throw new Error(data.error || 'Request failed');
+                await this.typewriterMessage("⚠️ Error: " + (data.error || "Unknown error"));
             }
-            
-        } catch (error) {
-            this.removeLoading(loadingId);
-            this.addMessage('Sorry, I encountered an error. Please try again.', 'ai');
-            console.error('Error sending message:', error);
+        } catch {
+            this.removeTypingIndicator();
+            await this.typewriterMessage("⚠️ AI system error. Please try again.");
         }
     }
 
-    addMessage(content, sender) {
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `message ${sender}-message`;
-        
-        const messageContent = document.createElement('div');
-        messageContent.className = 'message-content';
-        
-        if (sender === 'ai') {
-            messageContent.innerHTML = `<strong>AI Assistant:</strong> ${content}`;
-        } else {
-            messageContent.textContent = content;
-        }
-        
-        const messageTime = document.createElement('div');
-        messageTime.className = 'message-time';
-        messageTime.textContent = this.getCurrentTime();
-        
-        messageDiv.appendChild(messageContent);
-        messageDiv.appendChild(messageTime);
-        
-        this.chatMessages.appendChild(messageDiv);
-        this.scrollToBottom();
+    async showWelcomeMessage() {
+        const checked = await this.checkTodayStatus();
+        const greet = this.getGreetingTime();
+        const msg = checked
+            ? `${greet} I see you're already checked in today. Nice work! ⭐ Come back tomorrow for more points!`
+            : `${greet} Have you checked in today? Type "check-in" to earn 10 points! ⚡`;
+        await this.typewriterMessage(msg);
     }
 
-    showLoading() {
-        const loadingDiv = document.createElement('div');
-        loadingDiv.className = 'message ai-message';
-        loadingDiv.id = 'loading-message';
-        
-        const loadingContent = document.createElement('div');
-        loadingContent.className = 'message-content';
-        loadingContent.innerHTML = `
-            <strong>AI Assistant:</strong> 
-            <span class="loading-dots">
-                <span></span>
-                <span></span>
-                <span></span>
-            </span>
-        `;
-        
-        loadingDiv.appendChild(loadingContent);
-        this.chatMessages.appendChild(loadingDiv);
-        this.scrollToBottom();
-        
-        return 'loading-message';
-    }
-
-    removeLoading(loadingId) {
-        const loadingElement = document.getElementById(loadingId);
-        if (loadingElement) {
-            loadingElement.remove();
-        }
+    handleLogout() {
+        localStorage.clear();
+        window.location.href = "/login";
     }
 
     async loadPoints() {
-        try {
-            const token = localStorage.getItem('authToken');
-            const response = await fetch('/api/chat/points', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            
-            if (response.ok) {
-                const data = await response.json();
-                this.pointsValue.textContent = data.totalPoints;
-            }
-        } catch (error) {
-            console.error('Error loading points:', error);
+        const res = await fetch("/api/chat/points", {
+            headers: { "Authorization": `Bearer ${localStorage.getItem("authToken")}` }
+        });
+        if (res.ok) {
+            const data = await res.json();
+            this.pointsValue.textContent = data.totalPoints;
         }
     }
 
-    showWelcomeMessage() {
-        const welcomeTime = this.getGreetingTime();
-        
-        // Check if user already checked in today
-        this.checkTodayStatus().then(alreadyCheckedIn => {
-            if (alreadyCheckedIn) {
-                this.addMessage(`Hello! ${welcomeTime} I see you've already checked in today. Great job! ✅ Come back again tomorrow for more points!`, 'ai');
-            } else {
-                this.addMessage(`Hello! ${welcomeTime} Have you checked in today? Type "check-in" to earn 10 points! 🎯`, 'ai');
-            }
-        }).catch(error => {
-            // Fallback message if API fails
-            this.addMessage(`Hello! ${welcomeTime} Have you checked in today? Type "check-in" to earn 10 points! 🎯`, 'ai');
-        });
-    }
-
-    // New method to check today's status
     async checkTodayStatus() {
-        try {
-            const token = localStorage.getItem('authToken');
-            const response = await fetch('/api/chat/today-status', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            
-            if (response.ok) {
-                const data = await response.json();
-                return data.checkedInToday;
-            }
-        } catch (error) {
-            console.error('Error checking today status:', error);
+        const res = await fetch("/api/chat/today-status", {
+            headers: { "Authorization": `Bearer ${localStorage.getItem("authToken")}` }
+        });
+        if (res.ok) {
+            const data = await res.json();
+            return data.checkedInToday;
         }
         return false;
-    }
-
-    getGreetingTime() {
-        const hour = new Date().getHours();
-        if (hour < 12) return 'Good morning!';
-        if (hour < 18) return 'Good afternoon!';
-        return 'Good evening!';
-    }
-
-    getCurrentTime() {
-        return new Date().toLocaleTimeString('en-US', { 
-            hour: '2-digit', 
-            minute: '2-digit',
-            hour12: false 
-        });
     }
 
     scrollToBottom() {
         this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
     }
 
-    handleLogout() {
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('userData');
-        window.location.href = '/login';
+    getGreetingTime() {
+        const hour = new Date().getHours();
+        if (hour < 12) return "Good morning!";
+        if (hour < 18) return "Good afternoon!";
+        return "Good evening!";
+    }
+
+    getCurrentTime() {
+        return new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: false });
     }
 }
 
-// Initialize chat when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    new ChatManager();
-});
+document.addEventListener("DOMContentLoaded", () => new ChatManager());
