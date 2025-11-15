@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat Dashboard</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/chat.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>AI Assistant</h2>
+                <div class="user-info">
+                    <span id="userName">User</span>
+                    <button id="logoutBtn" class="btn-logout">Logout</button>
+                </div>
+            </div>
+            
+            <div class="points-display">
+                <div class="points-card">
+                    <h3>Your Points</h3>
+                    <div class="points-value" id="pointsValue">0</div>
+                    <p>Check in daily to earn more points!</p>
+                </div>
+            </div>
+            
+            <div class="chat-history">
+                <h4>Today's Session</h4>
+                <div id="sessionHistory" class="session-list">
+                    <!-- Session history will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Chat Area -->
+        <div class="main-content">
+            <div class="chat-container">
+                <div class="chat-header">
+                    <h1>AI Chat Assistant</h1>
+                    <p>Ask me anything, but remember to check in! ✅</p>
+                </div>
+                
+                <div class="chat-messages" id="chatMessages">
+                    <!-- Messages will be displayed here -->
+                    <div class="message ai-message">
+                        <div class="message-content">
+                            <strong>AI Assistant:</strong> Hello! How are you? Have you checked in today?
+                        </div>
+                        <div class="message-time" id="currentTime"></div>
+                    </div>
+                </div>
+                
+                <div class="chat-input-container">
+                    <form id="chatForm" class="chat-form">
+                        <div class="input-group">
+                            <input type="text" id="messageInput" 
+                                   placeholder="Type your message here... (Say 'check-in' to earn points)" 
+                                   autocomplete="off">
+                            <button type="submit" class="btn-send">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </form>
+                    <div class="chat-tips">
+                        <span>💡 Tip: Type "check-in" to validate your daily check-in and earn points!</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/chat.js"></script>
+    <script src="../js/auth.js"></script>
+</body>
+</html>
