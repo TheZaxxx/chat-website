@@ -3,90 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Chat Dashboard | Premium</title>
+    <title>AI Chat | Gold Tech</title>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/chat.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="dashboard-container-premium">
-        <!-- Premium Sidebar -->
-        <div class="sidebar-premium">
-            <div class="sidebar-header-premium">
-                <h2>🤖 AI Assistant</h2>
-                <div class="user-info-premium">
-                    <span id="userName">User</span>
-                    <button id="logoutBtn" class="btn-3d" style="padding: 8px 16px; font-size: 0.875rem;">Logout</button>
+    <div class="dashboard-container-gold">
+        <!-- Gold Sidebar -->
+        <div class="sidebar-gold">
+            <div class="sidebar-header-gold">
+                <h2>AI_ASSISTANT</h2>
+                <div class="user-info-gold">
+                    <span id="userName">user@ai-chat</span>
+                    <button id="logoutBtn" class="btn-gold" style="padding: 6px 12px; font-size: 12px;">LOGOUT</button>
                 </div>
             </div>
             
-            <div class="points-display">
-                <div class="points-card-premium">
-                    <h3>🎯 Your Points</h3>
-                    <div class="points-value-premium" id="pointsValue">0</div>
-                    <div class="points-breakdown-premium">
-                        <div class="point-source">
-                            <span class="value" id="checkInPoints">0</span>
-                            <span class="label">Check-ins</span>
-                        </div>
-                        <div class="point-source">
-                            <span class="value" id="referralPoints">0</span>
-                            <span class="label">Referrals</span>
-                        </div>
+            <div class="points-card-gold">
+                <h3>POINTS_SYSTEM</h3>
+                <div class="points-value-gold" id="pointsValue">0</div>
+                <div class="points-breakdown-gold">
+                    <div class="point-source-gold">
+                        <span class="value" id="checkInPoints">0</span>
+                        <span class="label">CHECK_INS</span>
+                    </div>
+                    <div class="point-source-gold">
+                        <span class="value" id="referralPoints">0</span>
+                        <span class="label">REFERRALS</span>
                     </div>
                 </div>
             </div>
 
-            <div class="sidebar-nav-premium">
-                <a href="/dashboard.html" class="nav-item-premium active">
-                    <span>💬</span> AI Chat
+            <div class="sidebar-nav-gold">
+                <a href="/dashboard.html" class="nav-item-gold active">
+                    <span>>_</span> CHAT_AI
                 </a>
-                <a href="/leaderboard.html" class="nav-item-premium">
-                    <span>🏆</span> Leaderboard
+                <a href="/leaderboard.html" class="nav-item-gold">
+                    <span>#</span> LEADERBOARD
                 </a>
-                <a href="/referral.html" class="nav-item-premium">
-                    <span>👥</span> Referral Program
+                <a href="/referral.html" class="nav-item-gold">
+                    <span>$</span> REFERRAL_PROGRAM
                 </a>
-                <a href="/history.html" class="nav-item-premium">
-                    <span>📚</span> Chat History
+                <a href="/history.html" class="nav-item-gold">
+                    <span>~</span> CHAT_HISTORY
                 </a>
             </div>
             
-            <div class="notifications-preview">
-                <h4 style="color: white; margin-bottom: 1rem;">🔔 Notifications</h4>
-                <div id="notificationsList" class="notifications-list">
+            <div style="margin-top: auto;">
+                <h4 style="color: #888; margin-bottom: 12px; font-size: 12px;">SYSTEM_NOTIFICATIONS</h4>
+                <div id="notificationsList" style="max-height: 120px; overflow-y: auto;">
                     <!-- Notifications will be loaded here -->
                 </div>
             </div>
         </div>
 
-        <!-- Premium Main Chat Area -->
-        <div class="main-content-premium">
-            <div class="chat-container-premium">
-                <div class="chat-header-premium">
-                    <h1>AI Chat Assistant</h1>
-                    <p>Your premium AI companion for intelligent conversations ✨</p>
+        <!-- Gold Main Chat Area -->
+        <div class="main-content-gold">
+            <div class="chat-container-gold">
+                <div class="chat-header-gold">
+                    <h1>AI_CHAT_ASSISTANT</h1>
+                    <p>SYSTEM_READY_FOR_INTERACTION</p>
                 </div>
                 
-                <div class="chat-messages-premium" id="chatMessages">
-                    <!-- Premium messages will be displayed here -->
+                <div class="chat-messages-gold" id="chatMessages">
+                    <!-- Messages will be displayed here -->
                 </div>
                 
-                <div class="chat-input-container-premium">
-                    <form id="chatForm" class="chat-form-premium">
-                        <div class="input-group-premium">
+                <div class="chat-input-container-gold">
+                    <form id="chatForm" class="chat-form-gold">
+                        <div class="input-group-gold">
                             <input type="text" id="messageInput" 
-                                   placeholder="Type your message here... (Say 'check-in' to earn points) ✨" 
+                                   placeholder="TYPE_MESSAGE_HERE... (USE 'check-in' TO EARN_POINTS)" 
                                    autocomplete="off">
-                            <button type="submit" class="btn-send-premium">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <button type="submit" class="btn-send-gold">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                                     <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
                                 </svg>
                             </button>
                         </div>
                     </form>
-                    <div class="chat-tips-premium">
-                        <span>💡 Pro Tip: Type "check-in" daily to earn 10 points and climb the leaderboard! 🚀</span>
+                    <div class="chat-tips-gold">
+                        <span>SYSTEM_TIP: TYPE "check-in" DAILY TO EARN 10 POINTS</span>
                     </div>
                 </div>
             </div>
