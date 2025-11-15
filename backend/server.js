@@ -95,44 +95,67 @@ app.post('/api/auth/login', async (req, res) => {
 });
 
 // Chat Routes
-app.post('/api/chat/check-in', (req, res) => {
+app.post('/api/chat/check-in', authMiddleware, (req, res) => {
     try {
-        const token = req.header('Authorization')?.replace('Bearer ', '');
-        if (!token) {
-            return res.status(401).json({ error: 'No token' });
-        }
-        
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret');
-        const userId = decoded.userId;
+        const userId = req.userId;
         const { message } = req.body;
         
+        console.log('Check-in request from user:', userId, 'message:', message);
+        
         // Check-in validation
-        const checkInPattern = /check-in|checkin|cek-in|cekin/i;
+        const checkInPattern = /check-in|checkin|cek-in|cekin|i want to check in/i;
+        
+        // Check if user already checked in today
+        const today = new Date().toDateString();
+        const alreadyCheckedIn = checkIns.find(checkIn => {
+            const checkInDate = new Date(checkIn.checkInTime).toDateString();
+            return checkIn.userId === userId && checkInDate === today;
+        });
         
         if (checkInPattern.test(message)) {
-            // Record check-in
-            const points = 10;
-            const checkIn = {
-                id: checkIns.length + 1,
-                userId,
-                checkInTime: new Date(),
-                pointsEarned: points
-            };
-            checkIns.push(checkIn);
-            
-            res.json({
-                response: `Great! You have successfully checked in and earned ${points} points! 🎉`,
-                checkedIn: true,
-                pointsEarned: points
-            });
+            if (alreadyCheckedIn) {
+                // User already checked in today
+                res.json({
+                    response: "You have already checked in today. Come back again tomorrow to earn more points! 💫",
+                    checkedIn: false,
+                    alreadyChecked: true
+                });
+            } else {
+                // Record check-in
+                const points = 10;
+                const checkIn = {
+                    id: checkIns.length + 1,
+                    userId,
+                    checkInTime: new Date(),
+                    pointsEarned: points
+                };
+                checkIns.push(checkIn);
+                
+                res.json({
+                    response: `Great! You have successfully checked in and earned ${points} points! 🎉 Come back again tomorrow!`,
+                    checkedIn: true,
+                    pointsEarned: points,
+                    firstCheckIn: true
+                });
+            }
         } else {
-            res.json({
-                response: "Oh, you haven't checked in yet. Please send me a check-in validation message so you don't lose your points!",
-                checkedIn: false
-            });
+            // Regular message (not check-in)
+            if (alreadyCheckedIn) {
+                res.json({
+                    response: "Hello! I see you've already checked in today. Great job! ✅ Come back again tomorrow for more points!",
+                    checkedIn: true,
+                    alreadyChecked: true
+                });
+            } else {
+                res.json({
+                    response: "Oh, you haven't checked in yet. Please send me a check-in validation message so you don't lose your points!",
+                    checkedIn: false
+                });
+            }
         }
     } catch (error) {
-        res.status(401).json({ error: 'Invalid token' });
+        console.error('Check-in error:', error);
+        res.status(500).json({ error: 'Server error' });
     }
 });
 
