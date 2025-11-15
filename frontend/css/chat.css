@@ -1,3 +1,14 @@
+/* === GLOBAL MOBILE FIX === */
+html, body {
+    height: 100dvh;
+    overflow: hidden;
+    overscroll-behavior: none;
+    -webkit-touch-callout: none;
+}
+
+.dashboard-container-gold {
+    height: 100dvh !important;
+}
 /* ===== GOLD CHAT INTERFACE ===== */
 .chat-container-gold {
     flex: 1;
@@ -185,7 +196,7 @@
 @media (max-width: 768px) {
     .dashboard-container-gold {
         flex-direction: column;
-        height: 100vh;
+        height: 100dvh;
         overflow: hidden;
     }
     
@@ -200,7 +211,7 @@
     .main-content-gold {
         flex: 1;
         padding: 0;
-        height: calc(100vh - 200px);
+        height: calc(100dvh - 200px);
         min-height: 0;
     }
     
@@ -279,7 +290,7 @@
 /* ===== EXTRA SMALL DEVICES ===== */
 @media (max-width: 480px) {
     .main-content-gold {
-        height: calc(100vh - 180px);
+        height: calc(100dvh - 180px);
     }
     
     .chat-messages-gold {
@@ -321,14 +332,16 @@ html, body {
 }
 
 .dashboard-container-gold {
-    height: 100vh;
+    height: 100dvh;
 }
 
 /* ===== ENSURE CHAT TAKES FULL HEIGHT ===== */
 .chat-container-gold {
+    flex: 1;
     display: flex;
     flex-direction: column;
     height: 100%;
+    min-height: 0;
 }
 
 .chat-messages-gold {
@@ -342,10 +355,4 @@ html, body {
     display: flex;
     flex-direction: column;
 }
-
-.chat-container-gold {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
- } 
 }
