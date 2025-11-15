@@ -11,12 +11,16 @@ class ChatManager {
     }
 
     init() {
+        // Check authentication
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            window.location.href = '/login';
+            return;
+        }
+        
         this.loadUserData();
         this.setupEventListeners();
-        this.updateCurrentTime();
         this.loadPoints();
-        
-        // Show welcome message
         this.showWelcomeMessage();
     }
 
@@ -24,14 +28,14 @@ class ChatManager {
         this.chatForm.addEventListener('submit', (e) => this.handleSendMessage(e));
         this.logoutBtn.addEventListener('click', () => this.handleLogout());
         
-        // Auto-resize textarea
+        // Auto-resize input
         this.messageInput.addEventListener('input', () => {
             this.messageInput.style.height = 'auto';
             this.messageInput.style.height = Math.min(this.messageInput.scrollHeight, 120) + 'px';
         });
     }
 
-    async loadUserData() {
+    loadUserData() {
         try {
             const userData = localStorage.getItem('userData');
             if (userData) {
@@ -58,19 +62,31 @@ class ChatManager {
         const loadingId = this.showLoading();
 
         try {
-            // Send message to backend
-            const response = await api.sendMessage(message);
+            const token = localStorage.getItem('authToken');
+            const response = await fetch('/api/chat/check-in', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ message })
+            });
+            
+            const data = await response.json();
             
             // Remove loading indicator
             this.removeLoading(loadingId);
             
-            // Add AI response
-            this.addMessage(response.response, 'ai');
-            
-            // Update points if check-in was successful
-            if (response.checkedIn) {
-                await this.loadPoints();
-                this.showPointsAnimation();
+            if (response.ok) {
+                // Add AI response
+                this.addMessage(data.response, 'ai');
+                
+                // Update points if check-in was successful
+                if (data.checkedIn) {
+                    await this.loadPoints();
+                }
+            } else {
+                throw new Error(data.error || 'Request failed');
             }
             
         } catch (error) {
@@ -136,23 +152,56 @@ class ChatManager {
 
     async loadPoints() {
         try {
-            const response = await api.getPoints();
-            this.pointsValue.textContent = response.totalPoints;
+            const token = localStorage.getItem('authToken');
+            const response = await fetch('/api/chat/points', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                this.pointsValue.textContent = data.totalPoints;
+            }
         } catch (error) {
             console.error('Error loading points:', error);
         }
     }
 
-    showPointsAnimation() {
-        this.pointsValue.classList.add('points-earned');
-        setTimeout(() => {
-            this.pointsValue.classList.remove('points-earned');
-        }, 600);
-    }
-
     showWelcomeMessage() {
         const welcomeTime = this.getGreetingTime();
-        this.addMessage(`Hello! ${welcomeTime} Have you checked in today?`, 'ai');
+        
+        // Check if user already checked in today
+        this.checkTodayStatus().then(alreadyCheckedIn => {
+            if (alreadyCheckedIn) {
+                this.addMessage(`Hello! ${welcomeTime} I see you've already checked in today. Great job! ✅ Come back again tomorrow for more points!`, 'ai');
+            } else {
+                this.addMessage(`Hello! ${welcomeTime} Have you checked in today? Type "check-in" to earn 10 points! 🎯`, 'ai');
+            }
+        }).catch(error => {
+            // Fallback message if API fails
+            this.addMessage(`Hello! ${welcomeTime} Have you checked in today? Type "check-in" to earn 10 points! 🎯`, 'ai');
+        });
+    }
+
+    // New method to check today's status
+    async checkTodayStatus() {
+        try {
+            const token = localStorage.getItem('authToken');
+            const response = await fetch('/api/chat/today-status', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                return data.checkedInToday;
+            }
+        } catch (error) {
+            console.error('Error checking today status:', error);
+        }
+        return false;
     }
 
     getGreetingTime() {
@@ -170,13 +219,6 @@ class ChatManager {
         });
     }
 
-    updateCurrentTime() {
-        const timeElement = document.getElementById('currentTime');
-        if (timeElement) {
-            timeElement.textContent = this.getCurrentTime();
-        }
-    }
-
     scrollToBottom() {
         this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
     }
@@ -190,12 +232,5 @@ class ChatManager {
 
 // Initialize chat when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    // Check if user is authenticated
-    const token = localStorage.getItem('authToken');
-    if (!token) {
-        window.location.href = '/login';
-        return;
-    }
-    
     new ChatManager();
 });
