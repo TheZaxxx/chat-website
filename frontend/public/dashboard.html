@@ -23,14 +23,29 @@
                 <div class="points-card">
                     <h3>Your Points</h3>
                     <div class="points-value" id="pointsValue">0</div>
-                    <p>Check in daily to earn more points!</p>
+                    <div class="points-breakdown">
+                        <small>Check-ins: <span id="checkInPoints">0</span></small>
+                        <small>Referrals: <span id="referralPoints">0</span></small>
+                    </div>
                 </div>
             </div>
+
+            <div class="sidebar-nav">
+                <a href="/dashboard.html" class="nav-item active">
+                    <span>💬</span> Chat
+                </a>
+                <a href="/leaderboard.html" class="nav-item">
+                    <span>🏆</span> Leaderboard
+                </a>
+                <a href="/referral.html" class="nav-item">
+                    <span>👥</span> Referral Program
+                </a>
+            </div>
             
-            <div class="chat-history">
-                <h4>Today's Session</h4>
-                <div id="sessionHistory" class="session-list">
-                    <!-- Session history will be loaded here -->
+            <div class="notifications-preview">
+                <h4>Recent Notifications</h4>
+                <div id="notificationsList" class="notifications-list">
+                    <!-- Notifications will be loaded here -->
                 </div>
             </div>
         </div>
