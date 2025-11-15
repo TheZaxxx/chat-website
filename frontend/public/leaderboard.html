@@ -3,78 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leaderboard - AI Chat</title>
+    <title>Leaderboard | Premium AI Chat</title>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/leaderboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="dashboard-container">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="sidebar-header">
-                <h2>AI Assistant</h2>
-                <div class="user-info">
+    <div class="dashboard-container-premium">
+        <!-- Premium Sidebar -->
+        <div class="sidebar-premium">
+            <div class="sidebar-header-premium">
+                <h2>🤖 AI Assistant</h2>
+                <div class="user-info-premium">
                     <span id="userName">User</span>
-                    <button id="logoutBtn" class="btn-logout">Logout</button>
+                    <button id="logoutBtn" class="btn-3d" style="padding: 8px 16px; font-size: 0.875rem;">Logout</button>
                 </div>
             </div>
             
-            <div class="sidebar-nav">
-                <a href="/dashboard.html" class="nav-item">
-                    <span>💬</span> Chat
+            <div class="sidebar-nav-premium">
+                <a href="/dashboard.html" class="nav-item-premium">
+                    <span>💬</span> AI Chat
                 </a>
-                <a href="/leaderboard.html" class="nav-item active">
+                <a href="/leaderboard.html" class="nav-item-premium active">
                     <span>🏆</span> Leaderboard
                 </a>
-                <a href="/referral.html" class="nav-item">
+                <a href="/referral.html" class="nav-item-premium">
                     <span>👥</span> Referral Program
+                </a>
+                <a href="/history.html" class="nav-item-premium">
+                    <span>📚</span> Chat History
                 </a>
             </div>
         </div>
 
-        <!-- Main Content -->
-        <div class="main-content">
-            <div class="leaderboard-container">
-                <div class="leaderboard-header">
-                    <h1>🏆 Leaderboard</h1>
-                    <p>Compete with other users and climb to the top!</p>
+        <!-- Premium Main Content -->
+        <div class="main-content-premium">
+            <div class="leaderboard-container-premium">
+                <div class="leaderboard-header-premium">
+                    <h1>🏆 Elite Leaderboard</h1>
+                    <p>Compete with the best and claim your throne! 👑</p>
                 </div>
 
-                <div class="leaderboard-tabs">
-                    <button class="tab-btn active" data-tab="weekly">Weekly Ranking</button>
-                    <button class="tab-btn" data-tab="alltime">All-Time Ranking</button>
+                <div class="leaderboard-tabs-premium">
+                    <button class="tab-btn-premium active" data-tab="weekly">📊 Weekly Ranking</button>
+                    <button class="tab-btn-premium" data-tab="alltime">⏳ All-Time Ranking</button>
                 </div>
 
-                <div class="leaderboard-content">
+                <div class="leaderboard-content-premium">
                     <!-- Weekly Leaderboard -->
-                    <div id="weekly-leaderboard" class="tab-content active">
-                        <div class="leaderboard-list" id="weeklyLeaderboard">
-                            <!-- Weekly ranking will be loaded here -->
+                    <div id="weekly-leaderboard" class="tab-content-premium active">
+                        <div class="leaderboard-list-premium" id="weeklyLeaderboard">
+                            <div class="loading-premium">Loading elite rankings...</div>
                         </div>
                     </div>
 
                     <!-- All-Time Leaderboard -->
-                    <div id="alltime-leaderboard" class="tab-content">
-                        <div class="leaderboard-list" id="allTimeLeaderboard">
-                            <!-- All-time ranking will be loaded here -->
+                    <div id="alltime-leaderboard" class="tab-content-premium">
+                        <div class="leaderboard-list-premium" id="allTimeLeaderboard">
+                            <div class="loading-premium">Loading legendary rankings...</div>
                         </div>
                     </div>
                 </div>
 
-                <div class="your-stats">
-                    <h3>Your Statistics</h3>
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-value" id="yourRank">-</div>
-                            <div class="stat-label">Current Rank</div>
+                <div class="your-stats-premium">
+                    <h3>Your Elite Stats</h3>
+                    <div class="stats-grid-premium">
+                        <div class="stat-card-premium">
+                            <div class="stat-value-premium" id="yourRank">-</div>
+                            <div class="stat-label-premium">Current Rank</div>
                         </div>
-                        <div class="stat-card">
-                            <div class="stat-value" id="yourPoints">0</div>
-                            <div class="stat-label">Total Points</div>
+                        <div class="stat-card-premium">
+                            <div class="stat-value-premium" id="yourPoints">0</div>
+                            <div class="stat-label-premium">Total Points</div>
                         </div>
-                        <div class="stat-card">
-                            <div class="stat-value" id="checkInStreak">0</div>
-                            <div class="stat-label">Check-in Streak</div>
+                        <div class="stat-card-premium">
+                            <div class="stat-value-premium" id="checkInStreak">0</div>
+                            <div class="stat-label-premium">Check-in Streak</div>
+                        </div>
+                        <div class="stat-card-premium">
+                            <div class="stat-value-premium" id="referralCount">0</div>
+                            <div class="stat-label-premium">Active Referrals</div>
                         </div>
                     </div>
                 </div>
