@@ -1,8 +1,18 @@
 class ChatManager {
     constructor() {
         this.chatMessages = document.getElementById('chatMessages');
+
+if (!this.chatMessages) {
+    alert("❌ ERROR: #chatMessages not found in DOM");
+    console.error("chatMessages not found");
+    return;
+}
         this.messageInput = document.getElementById('messageInput');
         this.chatForm = document.getElementById('chatForm');
+        if (!this.messageInput || !this.chatForm) {
+    alert("❌ Chat UI not found. Check HTML IDs.");
+    return;
+}
         this.pointsValue = document.getElementById('pointsValue');
         this.userName = document.getElementById('userName');
         this.logoutBtn = document.getElementById('logoutBtn');
