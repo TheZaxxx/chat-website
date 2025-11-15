@@ -1,180 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>AI Chat | Gold Tech</title>
-    <link rel="stylesheet" href="../css/style.css">
-    <link rel="stylesheet" href="../css/chat.css">
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/chat.css" />
     <style>
-        /* ===== MOBILE CHAT HEIGHT FIX ===== */
-        @media (max-width: 768px) {
-            .dashboard-container-gold {
-                flex-direction: column;
-                height: 100dvh;
-                overflow: hidden;
-            }
-            
-            .sidebar-gold {
-                width: 100%;
-                border-right: none;
-                border-bottom: 1px solid rgba(255, 215, 0, 0.1);
-                padding: 1rem;
-                flex-shrink: 0;
-            }
-            
-            .main-content-gold {
-                flex: 1;
-                padding: 0;
-                height: calc(100dvh - 200px);
-                min-height: 0;
-            }
-            
-            .chat-container-gold {
-                height: 100%;
-                max-width: 100%;
-                margin: 0;
-                border-radius: 0;
-                border: none;
-                border-top: 1px solid rgba(255, 215, 0, 0.2);
-            }
-            
-            .chat-header-gold {
-                padding: 1rem;
-            }
-            
-            .chat-header-gold h1 {
-                font-size: 1.3rem;
-            }
-            
-            .chat-header-gold p {
-                font-size: 0.8rem;
-            }
-            
-            .chat-messages-gold {
-                max-height: none;
-                height: calc(100% - 140px);
-                padding: 1rem;
-                flex: 1;
-                min-height: 0;
-            }
-            
-            .chat-input-container-gold {
-                padding: 1rem;
-                position: sticky;
-                bottom: 0;
-                background: var(--bg-card);
-                border-top: 1px solid rgba(255, 215, 0, 0.1);
-            }
-            
-            .input-group-gold {
-                gap: 0.8rem;
-            }
-            
-            #messageInput {
-                min-height: 45px;
-                font-size: 14px;
-            }
-            
-            .btn-send-gold {
-                min-width: 45px;
-                min-height: 45px;
-            }
-            
-            .chat-tips-gold {
-                font-size: 11px;
-                padding: 6px;
-                margin-top: 0.8rem;
-            }
-            
-            .message-gold {
-                max-width: 85%;
-            }
-            
-            .message-content-gold {
-                padding: 10px 12px;
-                font-size: 13px;
-            }
-            
-            .message-time-gold {
-                font-size: 10px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .main-content-gold {
-                height: calc(100dvh - 180px);
-            }
-            
-            .chat-messages-gold {
-                height: calc(100% - 130px);
-                padding: 0.8rem;
-            }
-            
-            .chat-header-gold {
-                padding: 0.8rem;
-            }
-            
-            .chat-header-gold h1 {
-                font-size: 1.2rem;
-            }
-            
-            .message-gold {
-                max-width: 90%;
-            }
-            
-            .sidebar-gold {
-                padding: 0.8rem;
-            }
-            
-            .user-info-gold {
-                padding: 6px 10px;
-                font-size: 11px;
-            }
-            
-            .nav-item-gold {
-                padding: 6px 10px;
-                font-size: 11px;
-            }
-        }
-
+        /* Small in-file adjustments kept minimal - most rules live in style.css / chat.css */
+        /* Ensure body uses dynamic viewport height so mobile browser bars don't break layout */
         html, body {
-            height: 100%;
-            overflow: hidden;
-        }
-
-        .dashboard-container-gold {
             height: 100dvh;
+            margin: 0;
+            padding: 0;
+            overflow: auto;
         }
 
-        .chat-container-gold {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
+        /* Force primary layout to remain two columns (scaled) on small screens */
+        .dashboard-container-gold {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 1.5rem;
+            height: 100dvh;
+            padding: 1.5rem;
+            box-sizing: border-box;
         }
 
-        .chat-messages-gold {
-            flex: 1;
-            overflow-y: auto;
+        /* When viewport is narrow, keep two columns but reduce sidebar width */
+        @media (max-width: 900px) {
+            .dashboard-container-gold {
+                grid-template-columns: 220px 1fr;
+                padding: 1rem;
+            }
+
+            .sidebar-gold {
+                padding: 1rem;
+            }
+
+            .main-content-gold {
+                padding: 1rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .dashboard-container-gold {
+                grid-template-columns: 180px 1fr;
+                padding: 0.6rem;
+            }
+
+            .sidebar-gold {
+                width: 180px;
+                padding: 0.6rem;
+            }
+
+            .main-content-gold {
+                padding: 0.6rem;
+            }
+
+            /* make text sizes slightly smaller but keep layout */
+            .points-value-gold { font-size: 2rem; }
+            .chat-header-gold h1 { font-size: 1.25rem; }
+            #messageInput { min-height: 44px; font-size: 13px; }
+            .btn-send-gold { min-width: 44px; min-height: 44px; padding: 8px; }
+        }
+
+        /* Prevent the chat container from growing beyond viewport and ensure internal scrolling only inside message area */
+        .main-content-gold, .chat-container-gold {
             min-height: 0;
-        }
-
-        .main-content-gold {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .chat-container-gold {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
         }
     </style>
 </head>
 <body>
     <div class="dashboard-container-gold">
         <!-- Gold Sidebar -->
-        <div class="sidebar-gold">
+        <div class="sidebar-gold glass-gold">
             <div class="sidebar-header-gold">
                 <h2>AI_ASSISTANT</h2>
                 <div class="user-info-gold">
@@ -182,7 +81,7 @@
                     <button id="logoutBtn" class="btn-gold" style="padding: 6px 12px; font-size: 12px;">LOGOUT</button>
                 </div>
             </div>
-            
+
             <div class="points-card-gold">
                 <h3>POINTS_SYSTEM</h3>
                 <div class="points-value-gold" id="pointsValue">0</div>
@@ -200,19 +99,19 @@
 
             <div class="sidebar-nav-gold">
                 <a href="/dashboard.html" class="nav-item-gold active">
-                    <span>>_</span> CHAT_AI
+                    <span>&gt;_</span>&nbsp; CHAT_AI
                 </a>
                 <a href="/leaderboard.html" class="nav-item-gold">
-                    <span>#</span> LEADERBOARD
+                    <span>#</span>&nbsp; LEADERBOARD
                 </a>
                 <a href="/referral.html" class="nav-item-gold">
-                    <span>$</span> REFERRAL_PROGRAM
+                    <span>$</span>&nbsp; REFERRAL_PROGRAM
                 </a>
                 <a href="/history.html" class="nav-item-gold">
-                    <span>~</span> CHAT_HISTORY
+                    <span>~</span>&nbsp; CHAT_HISTORY
                 </a>
             </div>
-            
+
             <div style="margin-top: auto;">
                 <h4 style="color: #888; margin-bottom: 12px; font-size: 12px;">SYSTEM_NOTIFICATIONS</h4>
                 <div id="notificationsList" style="max-height: 120px; overflow-y: auto;">
@@ -228,20 +127,20 @@
                     <h1>AI_CHAT_ASSISTANT</h1>
                     <p>SYSTEM_READY_FOR_INTERACTION</p>
                 </div>
-                
-                <div class="chat-messages-gold" id="chatMessages">
+
+                <div class="chat-messages-gold" id="chatMessages" aria-live="polite">
                     <!-- Messages will be displayed here -->
                 </div>
-                
+
                 <div class="chat-input-container-gold">
-                    <form id="chatForm" class="chat-form-gold">
+                    <form id="chatForm" class="chat-form-gold" autocomplete="off">
                         <div class="input-group-gold">
-                            <input type="text" id="messageInput" 
-                                   placeholder="TYPE_MESSAGE_HERE... (USE 'check-in' TO EARN_POINTS)" 
-                                   autocomplete="off">
-                            <button type="submit" class="btn-send-gold">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                            <input type="text" id="messageInput"
+                                   placeholder="TYPE_MESSAGE_HERE... (USE 'check-in' TO EARN_POINTS)"
+                                   autocomplete="off" />
+                            <button type="submit" class="btn-send-gold" aria-label="Send message">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
                                 </svg>
                             </button>
                         </div>
