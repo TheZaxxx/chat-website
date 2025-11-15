@@ -447,4 +447,42 @@
     .steps-premium {
         gap: 1rem;
     }
+    /* ===== GOLD TEXT FIXES ===== */
+/* Pastikan semua text putih dan font monospace */
+.leaderboard-container-premium,
+.referral-container-premium,
+.leaderboard-item-premium,
+.referral-stats-premium,
+.user-name-premium,
+.user-email-premium,
+.stat-value-premium,
+.stat-label-premium,
+.step-content-premium strong,
+.step-content-premium p {
+    color: #ffffff !important;
+    font-family: 'Courier New', 'Monaco', 'Menlo', monospace !important;
+}
+
+/* Fix untuk gold theme consistency */
+.leaderboard-header-premium h1,
+.referral-header-premium h1 {
+    font-family: 'Courier New', 'Monaco', 'Menlo', monospace !important;
+    font-weight: 700 !important;
+}
+
+/* Pastikan background tetap dark */
+.leaderboard-content-premium,
+.referral-code-section-premium,
+.share-section-premium,
+.how-it-works-premium {
+    background: var(--bg-card) !important;
+    border: 1px solid rgba(255, 215, 0, 0.2) !important;
+}
+
+/* Gold accent borders */
+.leaderboard-item-premium:hover,
+.stat-card-premium-large:hover,
+.step-premium:hover {
+    border-color: rgba(255, 215, 0, 0.4) !important;
+}
 }
