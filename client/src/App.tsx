@@ -91,6 +91,11 @@ function AuthenticatedLayout() {
           <main className="flex-1 overflow-y-auto">
             <Router />
           </main>
+          <footer className="border-t py-3 px-4 text-center">
+            <p className="text-xs text-muted-foreground">
+              © TXAI 2025. All rights reserved.
+            </p>
+          </footer>
         </div>
       </div>
     </SidebarProvider>

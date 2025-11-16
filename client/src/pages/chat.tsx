@@ -9,10 +9,25 @@ import { type ChatMessage, type ChatResponse } from "@shared/schema";
 import { getAuthHeaders, authStorage } from "@/lib/auth";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
+import { useTypingEffect } from "@/hooks/use-typing-effect";
+
+function TypingMessage({ message, messageId }: { message: string; messageId: string }) {
+  const { displayedText, isTyping } = useTypingEffect(message, 30);
+  
+  return (
+    <>
+      <p className="whitespace-pre-wrap break-words" data-testid={`message-text-${messageId}`}>
+        {displayedText}
+        {isTyping && <span className="inline-block w-1 h-4 bg-foreground/60 ml-0.5 animate-pulse" />}
+      </p>
+    </>
+  );
+}
 
 export default function Chat() {
   const [message, setMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [latestAiMessageId, setLatestAiMessageId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const user = authStorage.getUser();
@@ -43,6 +58,8 @@ export default function Chat() {
       return res.json() as Promise<ChatResponse>;
     },
     onSuccess: (data) => {
+      // Mark that we're expecting a new AI message to trigger typing animation
+      setLatestAiMessageId('pending');
       queryClient.invalidateQueries({ queryKey: ['/api/chat/history'] });
       queryClient.invalidateQueries({ queryKey: ['/api/user/stats'] });
       
@@ -84,12 +101,22 @@ export default function Chat() {
     new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
   ) : [];
 
+  // Track the latest AI message for typing animation
+  useEffect(() => {
+    if (allMessages.length > 0 && latestAiMessageId === 'pending') {
+      const latestAiMsg = [...allMessages].reverse().find(m => m.sender === 'ai');
+      if (latestAiMsg) {
+        setLatestAiMessageId(latestAiMsg.id);
+      }
+    }
+  }, [allMessages, latestAiMessageId]);
+
   return (
     <div className="h-[calc(100vh-4rem)] flex flex-col p-4 md:p-8 max-w-4xl mx-auto">
       <div className="mb-6">
         <h1 className="text-4xl font-[Poppins] font-bold mb-2">Chat</h1>
         <p className="text-muted-foreground text-lg">
-          Chat with AI and complete your daily check-in
+          Chat with TXAI and complete your daily check-in to get points.
         </p>
       </div>
 
@@ -97,7 +124,7 @@ export default function Chat() {
         <CardHeader className="border-b">
           <CardTitle className="text-xl font-[Poppins] flex items-center gap-2">
             <Bot className="w-6 h-6 text-primary" />
-            AI Assistant
+            TXAI
           </CardTitle>
         </CardHeader>
         <CardContent className="flex-1 overflow-y-auto p-6 space-y-4">
@@ -149,9 +176,13 @@ export default function Chat() {
                     }`}
                     data-testid={`message-${msg.sender}-${msg.id}`}
                   >
-                    <p className="whitespace-pre-wrap break-words" data-testid={`message-text-${msg.id}`}>
-                      {msg.message}
-                    </p>
+                    {msg.sender === 'ai' && msg.id === latestAiMessageId ? (
+                      <TypingMessage message={msg.message} messageId={msg.id} />
+                    ) : (
+                      <p className="whitespace-pre-wrap break-words" data-testid={`message-text-${msg.id}`}>
+                        {msg.message}
+                      </p>
+                    )}
                     <p className="text-xs opacity-70 mt-1" data-testid={`message-time-${msg.id}`}>
                       {new Date(msg.createdAt).toLocaleTimeString()}
                     </p>

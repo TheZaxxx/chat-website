@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard | Gold AI Chat</title>
+    <style>
+        /* ===== GOLD LEADERBOARD STYLES ===== */
+        :root {
+            --gold-primary: #FFD700;
+            --gold-secondary: #FFA500;
+            --gradient-gold: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FF8C00 100%);
+            --bg-dark: #0a0a0a;
+            --bg-card: #1a1a1a;
+            --font-mono: 'Courier New', 'Monaco', 'Menlo', monospace;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            max-width: 100%;
+            word-wrap: break-word;
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+        
+        body {
+            font-family: var(--font-mono);
+            background: var(--bg-dark);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .dashboard-container-gold {
+            display: flex;
+            min-height: 100vh;
+            background: var(--bg-dark);
+            flex-direction: column;
+        }
+        
+        .sidebar-gold {
+            width: 100%;
+            background: var(--bg-card);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            font-family: var(--font-mono);
+        }
+        
+        .sidebar-header-gold {
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .sidebar-header-gold h2 {
+            background: var(--gradient-gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .user-info-gold {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 215, 0, 0.1);
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            font-size: 12px;
+        }
+        
+        .sidebar-nav-gold {
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+        }
+        
+        .nav-item-gold {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            color: #ccc;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid transparent;
+            font-size: 12px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        
+        .nav-item-gold:hover {
+            background: rgba(255, 215, 0, 0.1);
+            color: var(--gold-primary);
+            border-color: rgba(255, 215, 0, 0.3);
+        }
+        
+        .nav-item-gold.active {
+            background: var(--gradient-gold);
+            color: #000;
+            box-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+            font-weight: 600;
+        }
+        
+        .btn-gold {
+            background: var(--gradient-gold);
+            color: #000;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 11px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+            flex-shrink: 0;
+        }
+        
+        .btn-gold:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6), 0 0 12px rgba(255, 215, 0, 0.4);
+        }
+        
+        .main-content-gold {
+            flex: 1;
+            background: var(--bg-dark);
+            padding: 1rem;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        .main-content-gold::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 165, 0, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        
+        .leaderboard-container-gold {
+            max-width: 100%;
+            margin: 0 auto;
+            overflow-x: hidden;
+        }
+        
+        .leaderboard-header-gold {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 0 0.5rem;
+        }
+        
+        .leaderboard-header-gold h1 {
+            background: var(--gradient-gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            word-wrap: break-word;
+            word-break: break-word;
+            line-height: 1.2;
+        }
+        
+        .leaderboard-header-gold p {
+            color: #888;
+            font-size: 0.9rem;
+            word-wrap: break-word;
+            word-break: break-word;
+            line-height: 1.3;
+        }
+        
+        .leaderboard-tabs-gold {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-bottom: 2rem;
+            background: var(--bg-card);
+            padding: 1rem;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+        
+        .tab-btn-gold {
+            padding: 1rem;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: #ccc;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            word-wrap: break-word;
+            word-break: break-word;
+            text-align: center;
+        }
+        
+        .tab-btn-gold:hover {
+            background: rgba(255, 215, 0, 0.2);
+            color: #fff;
+            border-color: var(--gold-primary);
+        }
+        
+        .tab-btn-gold.active {
+            background: var(--gradient-gold);
+            color: #000;
+            border-color: transparent;
+            box-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+        }
+        
+        .leaderboard-content-gold {
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        
+        .tab-content-gold {
+            display: none;
+            padding: 1.5rem 1rem;
+        }
+        
+        .tab-content-gold.active {
+            display: block;
+        }
+        
+        .leaderboard-list-gold {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .leaderboard-item-gold {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 1rem;
+            padding: 1.5rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .leaderboard-item-gold:hover {
+            background: rgba(255, 215, 0, 0.1);
+            transform: translateX(5px);
+            border-color: var(--gold-primary);
+        }
+        
+        .leaderboard-item-gold.you-item {
+            background: rgba(255, 215, 0, 0.2);
+            border: 2px solid var(--gold-primary);
+            box-shadow: 0 0 12px rgba(255, 215, 0, 0.3);
+        }
+        
+        .rank-gold {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+        }
+        
+        .rank-1-gold {
+            background: var(--gradient-gold);
+            color: #000;
+        }
+        
+        .rank-2-gold {
+            background: linear-gradient(135deg, #C0C0C0, #A0A0A0);
+            color: #000;
+        }
+        
+        .rank-3-gold {
+            background: linear-gradient(135deg, #CD7F32, #A65C00);
+            color: #000;
+        }
+        
+        .rank-other-gold {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+        
+        .user-info-leaderboard-gold {
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            width: 100%;
+        }
+        
+        .user-name-gold {
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            color: #fff;
+            word-wrap: break-word;
+            word-break: break-word;
+            line-height: 1.2;
+        }
+        
+        .user-email-gold {
+            color: #888;
+            font-size: 0.8rem;
+            word-wrap: break-word;
+            word-break: break-word;
+            line-height: 1.2;
+            margin-bottom: 0.5rem;
+        }
+        
+        .user-points-gold {
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: var(--gold-primary);
+            word-wrap: break-word;
+            word-break: break-word;
+        }
+        
+        .you-badge-gold {
+            background: var(--gradient-gold);
+            color: #000;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+            display: inline-block;
+            word-wrap: break-word;
+            word-break: break-word;
+        }
+        
+        .your-stats-gold {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 1.5rem 1rem;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7);
+            overflow: hidden;
+        }
+        
+        .your-stats-gold h3 {
+            margin-bottom: 1.5rem;
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-align: center;
+            background: var(--gradient-gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            word-wrap: break-word;
+            word-break: break-word;
+            line-height: 1.2;
+        }
+        
+        .stats-grid-gold {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .stat-card-gold {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.2rem 0.8rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .stat-card-gold:hover {
+            background: rgba(255, 215, 0, 0.1);
+            transform: translateY(-3px);
+            border-color: var(--gold-primary);
+        }
+        
+        .stat-value-gold {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--gold-primary);
+            margin-bottom: 0.5rem;
+            word-wrap: break-word;
+            word-break: break-word;
+        }
+        
+        .stat-label-gold {
+            font-size: 0.8rem;
+            color: #888;
+            font-weight: 500;
+            word-wrap: break-word;
+            word-break: break-word;
+            line-height: 1.2;
+        }
+        
+        .loading-gold {
+            text-align: center;
+            padding: 2rem;
+            color: #888;
+            word-wrap: break-word;
+            word-break: break-word;
+        }
+        
+        .empty-state-gold {
+            text-align: center;
+            padding: 2rem;
+            color: #888;
+            font-style: italic;
+            word-wrap: break-word;
+            word-break: break-word;
+            line-height: 1.3;
+        }
+
+        /* ===== DESKTOP STYLES ===== */
+        @media (min-width: 769px) {
+            .dashboard-container-gold {
+                flex-direction: row;
+            }
+            
+            .sidebar-gold {
+                width: 280px;
+                border-right: 1px solid rgba(255, 215, 0, 0.1);
+                border-bottom: none;
+                padding: 2rem;
+            }
+            
+            .sidebar-nav-gold {
+                flex-direction: column;
+                overflow-x: visible;
+            }
+            
+            .nav-item-gold {
+                white-space: normal;
+            }
+            
+            .main-content-gold {
+                padding: 2rem;
+            }
+            
+            .leaderboard-tabs-gold {
+                flex-direction: row;
+            }
+            
+            .leaderboard-item-gold {
+                flex-direction: row;
+                text-align: left;
+                align-items: center;
+            }
+            
+            .rank-gold {
+                margin-right: 1.5rem;
+            }
+            
+            .user-info-leaderboard-gold {
+                text-align: left;
+            }
+            
+            .you-badge-gold {
+                margin-top: 0;
+                margin-left: 1rem;
+            }
+            
+            .stats-grid-gold {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .leaderboard-container-gold {
+                max-width: 900px;
+            }
+            
+            .leaderboard-item-gold {
+                padding: 1.5rem 2rem;
+            }
+        }
+
+        /* ===== EXTRA SMALL DEVICES ===== */
+        @media (max-width: 480px) {
+            .main-content-gold {
+                padding: 0.8rem;
+            }
+            
+            .leaderboard-header-gold h1 {
+                font-size: 1.6rem;
+            }
+            
+            .leaderboard-item-gold {
+                padding: 1.2rem 0.8rem;
+            }
+            
+            .rank-gold {
+                width: 45px;
+                height: 45px;
+                font-size: 1rem;
+            }
+            
+            .user-name-gold {
+                font-size: 0.9rem;
+            }
+            
+            .user-points-gold {
+                font-size: 1.1rem;
+            }
+            
+            .stats-grid-gold {
+                grid-template-columns: 1fr;
+                gap: 0.8rem;
+            }
+            
+            .stat-card-gold {
+                padding: 1rem 0.5rem;
+            }
+            
+            .stat-value-gold {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container-gold">
+        <!-- Gold Sidebar -->
+        <div class="sidebar-gold">
+            <div class="sidebar-header-gold">
+                <h2>AI_ASSISTANT</h2>
+                <div class="user-info-gold">
+                    <span id="userName">user@ai-chat</span>
+                    <button id="logoutBtn" class="btn-gold">LOGOUT</button>
+                </div>
+            </div>
+            
+            <div class="sidebar-nav-gold">
+                <a href="/dashboard.html" class="nav-item-gold">
+                    <span>>_</span> CHAT_AI
+                </a>
+                <a href="/leaderboard.html" class="nav-item-gold active">
+                    <span>#</span> LEADERBOARD
+                </a>
+                <a href="/referral.html" class="nav-item-gold">
+                    <span>$</span> REFERRAL_PROGRAM
+                </a>
+            </div>
+        </div>
+
+        <!-- Gold Main Content -->
+        <div class="main-content-gold">
+            <div class="leaderboard-container-gold">
+                <div class="leaderboard-header-gold">
+                    <h1>LEADERBOARD</h1>
+                    <p>COMPETE_AND_CLIMB_THE_RANKS</p>
+                </div>
+
+                <div class="leaderboard-tabs-gold">
+                    <button class="tab-btn-gold active" data-tab="weekly">WEEKLY_RANKING</button>
+                    <button class="tab-btn-gold" data-tab="alltime">ALL_TIME_RANKING</button>
+                </div>
+
+                <div class="leaderboard-content-gold">
+                    <!-- Weekly Leaderboard -->
+                    <div id="weekly-leaderboard" class="tab-content-gold active">
+                        <div class="leaderboard-list-gold" id="weeklyLeaderboard">
+                            <div class="loading-gold">LOADING_RANKINGS...</div>
+                        </div>
+                    </div>
+
+                    <!-- All-Time Leaderboard -->
+                    <div id="alltime-leaderboard" class="tab-content-gold">
+                        <div class="leaderboard-list-gold" id="allTimeLeaderboard">
+                            <div class="loading-gold">LOADING_RANKINGS...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="your-stats-gold">
+                    <h3>YOUR_STATS</h3>
+                    <div class="stats-grid-gold">
+                        <div class="stat-card-gold">
+                            <div class="stat-value-gold" id="yourRank">-</div>
+                            <div class="stat-label-gold">CURRENT_RANK</div>
+                        </div>
+                        <div class="stat-card-gold">
+                            <div class="stat-value-gold" id="yourPoints">0</div>
+                            <div class="stat-label-gold">TOTAL_POINTS</div>
+                        </div>
+                        <div class="stat-card-gold">
+                            <div class="stat-value-gold" id="checkInStreak">0</div>
+                            <div class="stat-label-gold">CHECK_IN_STREAK</div>
+                        </div>
+                        <div class="stat-card-gold">
+                            <div class="stat-value-gold" id="referralCount">0</div>
+                            <div class="stat-label-gold">ACTIVE_REFERRALS</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/api.js"></script>
+    <script>
+        class LeaderboardManager {
+            constructor() {
+                this.currentTab = 'weekly';
+                this.init();
+            }
+
+            init() {
+                const token = localStorage.getItem('authToken');
+                if (!token) {
+                    window.location.href = '/login';
+                    return;
+                }
+
+                this.loadUserData();
+                this.setupEventListeners();
+                this.loadLeaderboard('weekly');
+                this.loadUserStats();
+            }
+
+            setupEventListeners() {
+                document.querySelectorAll('.tab-btn-gold').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        this.switchTab(e.target.dataset.tab);
+                    });
+                });
+
+                document.getElementById('logoutBtn').addEventListener('click', () => {
+                    this.handleLogout();
+                });
+            }
+
+            switchTab(tab) {
+                this.currentTab = tab;
+                
+                document.querySelectorAll('.tab-btn-gold').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.tab === tab);
+                });
+                
+                document.querySelectorAll('.tab-content-gold').forEach(content => {
+                    content.classList.toggle('active', content.id === `${tab}-leaderboard`);
+                });
+                
+                this.loadLeaderboard(tab);
+            }
+
+            async loadLeaderboard(type) {
+                const containerId = type === 'weekly' ? 'weeklyLeaderboard' : 'allTimeLeaderboard';
+                const container = document.getElementById(containerId);
+                
+                container.innerHTML = '<div class="loading-gold">LOADING_LEADERBOARD...</div>';
+
+                try {
+                    const token = localStorage.getItem('authToken');
+                    const response = await fetch(`/api/leaderboard/${type}`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.renderLeaderboard(container, data.leaderboard, type);
+                    } else {
+                        throw new Error('FAILED_TO_LOAD_LEADERBOARD');
+                    }
+                } catch (error) {
+                    container.innerHTML = `<div class="empty-state-gold">ERROR: ${error.message}</div>`;
+                    console.error('Leaderboard error:', error);
+                }
+            }
+
+            renderLeaderboard(container, leaderboard, type) {
+                const currentUser = JSON.parse(localStorage.getItem('userData'));
+                
+                if (leaderboard.length === 0) {
+                    container.innerHTML = '<div class="empty-state-gold">NO_DATA_AVAILABLE_YET</div>';
+                    return;
+                }
+
+                container.innerHTML = leaderboard.map((user, index) => {
+                    const rank = index + 1;
+                    const isYou = user.userId === currentUser.id;
+                    
+                    return `
+                        <div class="leaderboard-item-gold ${isYou ? 'you-item' : ''}">
+                            <div class="rank-gold rank-${rank}-gold">
+                                ${rank}
+                            </div>
+                            <div class="user-info-leaderboard-gold">
+                                <div class="user-name-gold">
+                                    ${user.name}
+                                    ${isYou ? '<span class="you-badge-gold">YOU</span>' : ''}
+                                </div>
+                                <div class="user-email-gold">${user.email}</div>
+                                <div class="user-points-gold">
+                                    ${user.points} PTS
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            async loadUserStats() {
+                try {
+                    const token = localStorage.getItem('authToken');
+                    
+                    const pointsResponse = await fetch('/api/chat/points', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+
+                    if (pointsResponse.ok) {
+                        const pointsData = await pointsResponse.json();
+                        document.getElementById('yourPoints').textContent = pointsData.totalPoints;
+                    }
+
+                    const leaderboardResponse = await fetch('/api/leaderboard/weekly', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+
+                    if (leaderboardResponse.ok) {
+                        const leaderboardData = await leaderboardResponse.json();
+                        const currentUser = JSON.parse(localStorage.getItem('userData'));
+                        const userRank = leaderboardData.leaderboard.findIndex(user => user.userId === currentUser.id) + 1;
+                        
+                        document.getElementById('yourRank').textContent = userRank > 0 ? `#${userRank}` : 'UNRANKED';
+                    }
+
+                    const streak = Math.floor(Math.random() * 10);
+                    document.getElementById('checkInStreak').textContent = `${streak} DAYS`;
+
+                } catch (error) {
+                    console.error('Error loading user stats:', error);
+                }
+            }
+
+            loadUserData() {
+                try {
+                    const userData = localStorage.getItem('userData');
+                    if (userData) {
+                        const user = JSON.parse(userData);
+                        document.getElementById('userName').textContent = user.name;
+                    }
+                } catch (error) {
+                    console.error('Error loading user data:', error);
+                }
+            }
+
+            handleLogout() {
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('userData');
+                window.location.href = '/login';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            new LeaderboardManager();
+        });
+    </script>
+</body>
+</html>

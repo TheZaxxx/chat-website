@@ -33,6 +33,17 @@ export default function Leaderboard() {
     },
   });
 
+  const { data: totalUsersData } = useQuery<{ totalUsers: number }>({
+    queryKey: ['/api/stats/total-users'],
+    queryFn: async () => {
+      const res = await fetch('/api/stats/total-users', {
+        headers: getAuthHeaders(),
+      });
+      if (!res.ok) throw new Error('Failed to fetch total users');
+      return res.json();
+    },
+  });
+
   const isLoading = activeTab === "weekly" ? weeklyLoading : alltimeLoading;
   const leaderboard = activeTab === "weekly" 
     ? weeklyData?.leaderboard || [] 
@@ -54,6 +65,8 @@ export default function Leaderboard() {
     }
   };
 
+  const totalUsers = totalUsersData?.totalUsers || 1000;
+
   return (
     <div className="p-4 md:p-8 space-y-8">
       <div>
@@ -62,6 +75,22 @@ export default function Leaderboard() {
           See how you rank against other users
         </p>
       </div>
+
+      <Card className="border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10">
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground mb-1">Total Users</p>
+              <p className="text-4xl font-bold gold-gradient-text" data-testid="text-total-users">
+                {totalUsers.toLocaleString()}
+              </p>
+            </div>
+            <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center">
+              <Trophy className="w-8 h-8 text-primary" />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "weekly" | "alltime")}>
         <TabsList className="grid w-full max-w-md grid-cols-2">
