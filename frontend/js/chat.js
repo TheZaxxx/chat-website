@@ -167,25 +167,33 @@ class ChatManager {
     }
 
     async showWelcome() {
-        // call /today-status if available; backend will be patched below
         try {
             const token = localStorage.getItem('authToken');
             const res = await fetch('/api/chat/today-status', {
                 headers: { 'Authorization': token ? `Bearer ${token}` : '' }
             });
-            let checked = false;
+            
             if (res.ok) {
                 const d = await res.json();
-                checked = !!d.checkedInToday;
+                const checked = !!d.checkedInToday;
+                const hasStarted = !!d.hasStarted;
+                
+                let msg = "";
+                
+                if (checked) {
+                    msg = "Hi, you have already successfully checked in today!\nCome back tomorrow 👋🏻";
+                } else if (hasStarted) {
+                    msg = "Welcome back!\nPlease type CHECK-IN to earn your points for today! 🎯";
+                } else {
+                    msg = "How are you 👋🏻\nYou are logged in today ✅\nLet's collect points for the requirements to get coins in the future 🪙\n\nPlease type START to sign in 🔑";
+                }
+                
+                await this.streamAssistantMessage(msg);
+            } else {
+                await this.streamAssistantMessage("How are you 👋🏻\nYou are logged in today ✅\nLet's collect points for the requirements to get coins in the future 🪙\n\nPlease type START to sign in 🔑");
             }
-            const greet = this.getGreeting();
-            const msg = checked
-                ? `${greet} I see you've already checked in today. Great job! ✅`
-                : `${greet} Have you checked in today? Type "check-in" to earn 10 points! 🎯`;
-            await this.streamAssistantMessage(msg);
         } catch (e) {
-            // fallback message
-            await this.streamAssistantMessage("Hello! System ready for interaction.");
+            await this.streamAssistantMessage("How are you 👋🏻\nYou are logged in today ✅\nLet's collect points for the requirements to get coins in the future 🪙\n\nPlease type START to sign in 🔑");
         }
     }
 
