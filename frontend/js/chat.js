@@ -1,13 +1,13 @@
 // frontend/js/chat.js
 class ChatManager {
     state = {
-    signed: false,
-    waitingSignature: true,
-    waitingCheckIn: false,
-    historyLoaded: false
-};
+        signed: false,
+        waitingSignature: true,
+        waitingCheckIn: false,
+        historyLoaded: false
+    };
+
     constructor() {
-        // safe selectors (match dashboard.html)
         this.chatMessages = document.getElementById("chatMessages");
         this.chatForm = document.getElementById("chatForm");
         this.messageInput = document.getElementById("messageInput");
@@ -29,7 +29,6 @@ class ChatManager {
     setup() {
         this.chatForm.addEventListener("submit", (e) => this.handleSend(e));
         if (this.logoutBtn) this.logoutBtn.addEventListener("click", () => this.handleLogout());
-        // autoresize
         this.messageInput.addEventListener('input', () => {
             this.messageInput.style.height = 'auto';
             this.messageInput.style.height = Math.min(this.messageInput.scrollHeight, 120) + 'px';
@@ -39,68 +38,114 @@ class ChatManager {
         this.showWelcome();
     }
 
-    // robust send logic (calls backend /check-in)
+    // MAIN MESSAGE HANDLER
     async handleSend(e) {
-    e.preventDefault();
-    const txt = this.messageInput.value.trim();
-    if (!txt) return;
+        e.preventDefault();
+        const txt = this.messageInput.value.trim();
+        if (!txt) return;
 
-    this.addUserMessage(txt);
-    this.saveChatHistory();
-
-    // SIGNATURE REQUIRED FIRST
-    if (this.state.waitingSignature) {
-        if (txt.toLowerCase() !== "start") {
-            return this.streamAssistantMessage(
-                `Wrong signature ⛔\nPlease type START to sign!`
-            );
+        this.addUserMessage(txt);
+        this.saveChatHistory();
+    
+        // STEP 1: WAIT FOR START
+        if (this.state.waitingSignature) {
+            if (txt.toLowerCase() !== "start") {
+                return this.streamAssistantMessage(`Wrong signature ⛔\nPlease type START to sign!`);
+            }
+            this.state.waitingSignature = false;
+            this.state.signed = true;
+            this.state.waitingCheckIn = true;
+            await this.streamAssistantMessage(`DONE! You successfully signed ✔`);
+            return this.sendWelcomeCheckInPrompt();
         }
 
-        this.state.waitingSignature = false;
-        this.state.signed = true;
-        this.state.waitingCheckIn = true;
-
-        await this.streamAssistantMessage(`DONE! You successfully signed ✔`);
-
-        return this.sendWelcomeCheckInPrompt();
-    }
-
-    // CHECK-IN PROCESS
-    if (this.state.waitingCheckIn) {
-        if (txt.toLowerCase() !== "check-in") {
-            return this.streamAssistantMessage(
-                `@#$_&-+()/*"' :;!? what? you are wrong! ⛔`
-            );
+        // STEP 2: WAIT FOR CHECK-IN
+        if (this.state.waitingCheckIn) {
+            if (txt.toLowerCase() !== "check-in") {
+                return this.streamAssistantMessage(`@#$_&-+()/*"' :;!? what? you are wrong! ⛔`);
+            }
+            return this.processCheckIn();
         }
 
-        // send to backend
-        return this.processCheckIn();
+        // AFTER sign & first check-in, fallback to normal
+        this.streamAssistantMessage("I don't understand that yet.");
     }
 
-    // fallback: AI chat after sign + check-in
-    this.streamAssistantMessage("I don't understand that yet.");
-}
+    // CUSTOM WELCOME
+    async showWelcome() {
+        if (!this.state.historyLoaded) {
+            this.loadChatHistory();
+            this.state.historyLoaded = true;
+        }
+
+        if (this.chatMessages.children.length > 0) return; // prevent duplicate
+
+        const now = new Date();
+        const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+        const date = now.toLocaleDateString([], { year: 'numeric', month: 'long', day: 'numeric' });
+
+        await this.streamAssistantMessage(
+            `Hello, you logged in today..\n⏱️ ${time}\n📅 ${date}\nPlease type START to sign!`
+        );
+    }
+
+    // CUSTOM PROMPT AFTER SIGN
+    async sendWelcomeCheckInPrompt() {
+        const h = new Date().getHours();
+        const greeting = h < 12 ? "Good morning!" : h < 18 ? "Good afternoon!" : "Good evening!";
+
+        const checked = await this.checkAlreadyCheckedIn();
+
+        if (checked) {
+            return this.streamAssistantMessage(`${greeting} I see you've already checked in today. Great job! ✅`);
+        }
+
+        return this.streamAssistantMessage(`${greeting} Have you checked in today? Type "check-in" to earn 10 points! 🎯`);
+    }
+
+    async checkAlreadyCheckedIn() {
+        const token = localStorage.getItem("authToken");
+        const res = await fetch("/api/chat/today-status", {
+            headers: { Authorization: token ? `Bearer ${token}` : "" }
+        });
+
+        if (!res.ok) return false;
+        const data = await res.json();
+        return !!data.checkedInToday;
+    }
+
+    // PROCESS CHECK-IN
+    async processCheckIn() {
+        const token = localStorage.getItem("authToken");
+        const response = await fetch("/api/chat/check-in", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: token ? `Bearer ${token}` : ""
+            },
+            body: JSON.stringify({ message: "check-in" })
+        });
+
+        const data = await response.json();
+
+        if (data.checkedIn && data.pointsEarned > 0) {
+            await this.streamAssistantMessage(`🎉 Congratulations! You successfully check-in today!\nCome back tomorrow to keep earning points!`);
+        } else {
+            await this.streamAssistantMessage(`I see you've already checked in today.\nCome back tomorrow to earn more points! ✅`);
+        }
+
+        this.state.waitingCheckIn = false;
+        this.saveChatHistory();
     }
 
     addUserMessage(text) {
         const wrapper = document.createElement('div');
         wrapper.className = 'message user-message-gold';
-        wrapper.innerHTML = `<div class="message-content-gold"><strong>You:</strong> ${this.escapeHtml(text)}</div>
-                             <div class="message-time-gold">${this.getTime()}</div>`;
+        wrapper.innerHTML = `<div class="message-content-gold"><strong>You:</strong> ${this.escapeHtml(text)}</div><div class="message-time-gold">${this.getTime()}</div>`;
         this.chatMessages.appendChild(wrapper);
         this.scrollBottom();
     }
 
-    addAssistantMessage(text) {
-        const wrapper = document.createElement('div');
-        wrapper.className = 'message ai-message-gold';
-        wrapper.innerHTML = `<div class="message-content-gold"><strong>assistant:</strong> ${this.escapeHtml(text)}</div>
-                             <div class="message-time-gold">${this.getTime()}</div>`;
-        this.chatMessages.appendChild(wrapper);
-        this.scrollBottom();
-    }
-
-    // streaming typewriter with humanized delays
     async streamAssistantMessage(text) {
         const wrapper = document.createElement('div');
         wrapper.className = 'message ai-message-gold';
@@ -119,95 +164,51 @@ class ChatManager {
             span.innerHTML = out;
             this.scrollBottom();
 
-            // punctuation pause
             if (',.!?'.includes(ch)) {
-                await this.sleep(this.punctuationDelay);
+                await this.sleep(200);
             } else {
-                const delay = this.baseSpeed + Math.random() * (this.maxSpeed - this.baseSpeed);
-                await this.sleep(delay);
+                await this.sleep(18 + Math.random() * 30);
             }
         }
 
-        // append time
         const timeDiv = document.createElement('div');
         timeDiv.className = 'message-time-gold';
         timeDiv.textContent = this.getTime();
         wrapper.appendChild(timeDiv);
         this.scrollBottom();
+        this.saveChatHistory();
     }
 
-    showTypingIndicator() {
-        // return id for later removal
-        const id = 'typing-' + Date.now();
-        const el = document.createElement('div');
-        el.id = id;
-        el.className = 'message ai-message-gold';
-        el.innerHTML = `<div class="message-content-gold"><strong>assistant:</strong> <span class="typingdots">...</span></div>`;
-        this.chatMessages.appendChild(el);
-        this.scrollBottom();
-        return id;
+    saveChatHistory() {
+        localStorage.setItem("chatHistory", this.chatMessages.innerHTML);
+        localStorage.setItem("chatState", JSON.stringify(this.state));
     }
 
-    removeTypingIndicator(id) {
-        if (!id) {
-            const el = document.querySelector('.message.ai-message-gold .typingdots')?.closest('.message.ai-message-gold');
-            if (el) el.remove();
-            return;
-        }
-        const el = document.getElementById(id);
-        if (el) el.remove();
+    loadChatHistory() {
+        const saved = localStorage.getItem("chatHistory");
+        const stateData = localStorage.getItem("chatState");
+
+        if (saved) this.chatMessages.innerHTML = saved;
+        if (stateData) this.state = JSON.parse(stateData);
     }
 
-    async loadPoints() {
-        try {
-            const token = localStorage.getItem('authToken');
-            const res = await fetch('/api/chat/points', {
-                headers: { 'Authorization': token ? `Bearer ${token}` : '' }
-            });
-            if (!res.ok) return;
-            const data = await res.json();
-            if (this.pointsValue) this.pointsValue.textContent = data.totalPoints ?? 0;
-        } catch (e) { console.warn(e); }
-    }
-
-    async showWelcome() {
-    if (!this.state.historyLoaded) {
-        this.loadChatHistory();
-        this.state.historyLoaded = true;
-    }
-
-    if (this.chatMessages.children.length > 0) return; // prevent duplicate welcome
-
-    const now = new Date();
-    const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
-    const date = now.toLocaleDateString([], { year: 'numeric', month: 'long', day: 'numeric' });
-
-    await this.streamAssistantMessage(
-        `Hello, you logged in today..\n⏱️ ${time}\n📅 ${date}\nPlease type START to sign!`
-    );
-}
-
-    getGreeting() {
-        const h = new Date().getHours();
-        if (h < 12) return 'Good morning!';
-        if (h < 18) return 'Good afternoon!';
-        return 'Good evening!';
+    // UTILS
+    scrollBottom() {
+        this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
     }
 
     getTime() {
         return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
     }
 
-    sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-
-    scrollBottom() {
-        this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+    sleep(ms) {
+        return new Promise(r => setTimeout(r, ms));
     }
 
     handleLogout() {
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('userData');
-        window.location.href = '/login';
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("userData");
+        window.location.href = "/login";
     }
 
     escapeHtml(s) {
@@ -215,7 +216,7 @@ class ChatManager {
     }
 }
 
-// SAFE init: wait until element exists
+// SAFE INIT
 function startChat() {
     if (document.getElementById("chatMessages")) {
         new ChatManager();
