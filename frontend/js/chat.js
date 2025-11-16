@@ -173,27 +173,21 @@ class ChatManager {
     }
 
     async showWelcome() {
-        // call /today-status if available; backend will be patched below
-        try {
-            const token = localStorage.getItem('authToken');
-            const res = await fetch('/api/chat/today-status', {
-                headers: { 'Authorization': token ? `Bearer ${token}` : '' }
-            });
-            let checked = false;
-            if (res.ok) {
-                const d = await res.json();
-                checked = !!d.checkedInToday;
-            }
-            const greet = this.getGreeting();
-            const msg = checked
-                ? `${greet} I see you've already checked in today. Great job! ✅`
-                : `${greet} Have you checked in today? Type "check-in" to earn 10 points! 🎯`;
-            await this.streamAssistantMessage(msg);
-        } catch (e) {
-            // fallback message
-            await this.streamAssistantMessage("Hello! System ready for interaction.");
-        }
+    if (!this.state.historyLoaded) {
+        this.loadChatHistory();
+        this.state.historyLoaded = true;
     }
+
+    if (this.chatMessages.children.length > 0) return; // prevent duplicate welcome
+
+    const now = new Date();
+    const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+    const date = now.toLocaleDateString([], { year: 'numeric', month: 'long', day: 'numeric' });
+
+    await this.streamAssistantMessage(
+        `Hello, you logged in today..\n⏱️ ${time}\n📅 ${date}\nPlease type START to sign!`
+    );
+}
 
     getGreeting() {
         const h = new Date().getHours();
