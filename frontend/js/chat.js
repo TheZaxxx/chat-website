@@ -41,47 +41,45 @@ class ChatManager {
 
     // robust send logic (calls backend /check-in)
     async handleSend(e) {
-        e.preventDefault();
-        const txt = this.messageInput.value.trim();
-        if (!txt) return;
-        this.addUserMessage(txt);
-        this.messageInput.value = '';
-        this.messageInput.style.height = 'auto';
+    e.preventDefault();
+    const txt = this.messageInput.value.trim();
+    if (!txt) return;
 
-        // show typing indicator
-        const typingId = this.showTypingIndicator();
+    this.addUserMessage(txt);
+    this.saveChatHistory();
 
-        try {
-            const token = localStorage.getItem('authToken');
-            const res = await fetch('/api/chat/check-in', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': token ? `Bearer ${token}` : ''
-                },
-                body: JSON.stringify({ message: txt })
-            });
-
-            if (!res.ok) {
-                // show server error
-                this.removeTypingIndicator(typingId);
-                this.addAssistantMessage(`⚠️ Server returned ${res.status}`);
-                return;
-            }
-
-            const data = await res.json();
-            this.removeTypingIndicator(typingId);
-
-            // if backend returns 'response' (your current backend uses 'response' field)
-            const replyText = data.response ?? data.reply ?? "No reply from server.";
-            await this.streamAssistantMessage(replyText);
-
-            if (data.checkedIn) await this.loadPoints();
-        } catch (err) {
-            this.removeTypingIndicator(typingId);
-            console.error("Network error:", err);
-            this.addAssistantMessage("❌ Failed to reach server. Check backend.");
+    // SIGNATURE REQUIRED FIRST
+    if (this.state.waitingSignature) {
+        if (txt.toLowerCase() !== "start") {
+            return this.streamAssistantMessage(
+                `Wrong signature ⛔\nPlease type START to sign!`
+            );
         }
+
+        this.state.waitingSignature = false;
+        this.state.signed = true;
+        this.state.waitingCheckIn = true;
+
+        await this.streamAssistantMessage(`DONE! You successfully signed ✔`);
+
+        return this.sendWelcomeCheckInPrompt();
+    }
+
+    // CHECK-IN PROCESS
+    if (this.state.waitingCheckIn) {
+        if (txt.toLowerCase() !== "check-in") {
+            return this.streamAssistantMessage(
+                `@#$_&-+()/*"' :;!? what? you are wrong! ⛔`
+            );
+        }
+
+        // send to backend
+        return this.processCheckIn();
+    }
+
+    // fallback: AI chat after sign + check-in
+    this.streamAssistantMessage("I don't understand that yet.");
+}
     }
 
     addUserMessage(text) {
