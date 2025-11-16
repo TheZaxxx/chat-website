@@ -14,6 +14,7 @@ let chatMessages = [];
 let referrals = [];
 let referralActivities = [];
 let notifications = [];
+let userSessions = [];
 let nextUserId = 1;
 let nextMessageId = 1;
 let nextReferralId = 1;
@@ -174,10 +175,18 @@ app.post('/api/chat/check-in', authMiddleware, (req, res) => {
         const userId = req.userId;
         const { message } = req.body;
         
-        console.log('Check-in request from user:', userId, 'message:', message);
+        console.log('Chat message from user:', userId, 'message:', message);
         
-        // Check-in validation
-        const checkInPattern = /check-in|checkin|cek-in|cekin|i want to check in/i;
+        // Get or create user session
+        let session = userSessions.find(s => s.userId === userId);
+        if (!session) {
+            session = {
+                userId,
+                hasStarted: false,
+                createdAt: new Date()
+            };
+            userSessions.push(session);
+        }
         
         // Check if user already checked in today
         const today = new Date().toDateString();
@@ -186,7 +195,7 @@ app.post('/api/chat/check-in', authMiddleware, (req, res) => {
             return checkIn.userId === userId && checkInDate === today;
         });
         
-        // Save chat message
+        // Save user message
         const userMessage = {
             id: nextMessageId++,
             user_id: userId,
@@ -197,25 +206,22 @@ app.post('/api/chat/check-in', authMiddleware, (req, res) => {
         };
         chatMessages.push(userMessage);
         
-        if (checkInPattern.test(message)) {
-            if (alreadyCheckedIn) {
-                // AI response for already checked in
-                const aiMessage = {
-                    id: nextMessageId++,
-                    user_id: userId,
-                    message: "You have already checked in today. Come back again tomorrow to earn more points! 💫",
-                    sender: 'ai',
-                    session_id: 'default',
-                    created_at: new Date()
-                };
-                chatMessages.push(aiMessage);
-                
-                res.json({
-                    response: "You have already checked in today. Come back again tomorrow to earn more points! 💫",
-                    checkedIn: false,
-                    alreadyChecked: true
-                });
+        let aiResponse = "";
+        let checkedIn = false;
+        let pointsEarned = 0;
+        
+        // STEP 1: User must START first
+        if (!session.hasStarted) {
+            if (message.trim().toUpperCase() === 'START') {
+                session.hasStarted = true;
+                aiResponse = "Congratulations! You have successfully signed in ✅\nNow let's CHECK-IN to get points!";
             } else {
+                aiResponse = "@#$_&-+()/ What? You are wrong ❎\nPlease try to sign in correctly";
+            }
+        }
+        // STEP 2: After START, user must CHECK-IN
+        else if (!alreadyCheckedIn) {
+            if (message.trim().toLowerCase() === 'check-in') {
                 // Record check-in
                 const points = 10;
                 const checkIn = {
@@ -226,16 +232,9 @@ app.post('/api/chat/check-in', authMiddleware, (req, res) => {
                 };
                 checkIns.push(checkIn);
                 
-                // AI response for successful check-in
-                const aiMessage = {
-                    id: nextMessageId++,
-                    user_id: userId,
-                    message: `Great! You have successfully checked in and earned ${points} points! 🎉 Come back again tomorrow!`,
-                    sender: 'ai',
-                    session_id: 'default',
-                    created_at: new Date()
-                };
-                chatMessages.push(aiMessage);
+                aiResponse = "Congratulations! 🎉\nYou have successfully earned 10 points from today's check-in!\nCome back tomorrow to keep earning points, and maintain your weekly process to get bonuses!";
+                checkedIn = true;
+                pointsEarned = points;
                 
                 // Create notification
                 const notification = {
@@ -251,41 +250,40 @@ app.post('/api/chat/check-in', authMiddleware, (req, res) => {
                 
                 // Check for weekly referral bonus
                 checkWeeklyReferralBonus(userId);
-                
-                res.json({
-                    response: `Great! You have successfully checked in and earned ${points} points! 🎉 Come back again tomorrow!`,
-                    checkedIn: true,
-                    pointsEarned: points,
-                    firstCheckIn: true
-                });
-            }
-        } else {
-            // Regular message (not check-in)
-            let aiResponse = "";
-            if (alreadyCheckedIn) {
-                aiResponse = "Hello! I see you've already checked in today. Great job! ✅ Come back again tomorrow for more points!";
             } else {
-                aiResponse = "Oh, you haven't checked in yet. Please send me a check-in validation message so you don't lose your points!";
+                aiResponse = "WRONG! You failed to check-in ⚠️\nPlease try again with the correct command";
             }
-            
-            const aiMessage = {
-                id: nextMessageId++,
-                user_id: userId,
-                message: aiResponse,
-                sender: 'ai',
-                session_id: 'default',
-                created_at: new Date()
-            };
-            chatMessages.push(aiMessage);
-            
-            res.json({
-                response: aiResponse,
-                checkedIn: alreadyCheckedIn,
-                alreadyChecked: alreadyCheckedIn
-            });
         }
+        // STEP 3: User already checked in today
+        else {
+            if (message.trim().toLowerCase() === 'check-in') {
+                aiResponse = "Hi, you have already successfully checked in today!\nCome back tomorrow 👋🏻";
+            } else {
+                aiResponse = "Hi, you have already successfully checked in today!\nCome back tomorrow 👋🏻";
+            }
+        }
+        
+        // Save AI response
+        const aiMessage = {
+            id: nextMessageId++,
+            user_id: userId,
+            message: aiResponse,
+            sender: 'ai',
+            session_id: 'default',
+            created_at: new Date()
+        };
+        chatMessages.push(aiMessage);
+        
+        res.json({
+            response: aiResponse,
+            checkedIn: checkedIn || alreadyCheckedIn,
+            alreadyChecked: alreadyCheckedIn,
+            pointsEarned: pointsEarned,
+            hasStarted: session.hasStarted
+        });
+        
     } catch (error) {
-        console.error('Check-in error:', error);
+        console.error('Chat error:', error);
         res.status(500).json({ error: 'Server error' });
     }
 });
@@ -425,12 +423,21 @@ app.get('/api/referral/info', authMiddleware, (req, res) => {
             totalReferralPoints += activities.reduce((sum, activity) => sum + activity.points_earned, 0);
         });
         
+        let domain;
+        if (process.env.REPLIT_DEV_DOMAIN) {
+            domain = `https://${process.env.REPLIT_DEV_DOMAIN}`;
+        } else if (process.env.REPL_SLUG && process.env.REPL_OWNER) {
+            domain = `https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co`;
+        } else {
+            domain = 'http://localhost:5000';
+        }
+        
         res.json({
             referralCode: user.referralCode,
             totalReferrals: userReferrals.length,
             activeReferrals: activeReferrals.length,
             totalPointsEarned: totalReferralPoints,
-            shareableLink: `http://localhost:3000/register?ref=${user.referralCode}`
+            shareableLink: `${domain}/register?ref=${user.referralCode}`
         });
     } catch (error) {
         console.error('Referral info error:', error);
@@ -482,9 +489,20 @@ app.get('/api/chat/today-status', authMiddleware, (req, res) => {
             return checkIn.userId === userId && checkInDate === today;
         });
         
+        let session = userSessions.find(s => s.userId === userId);
+        if (!session) {
+            session = {
+                userId,
+                hasStarted: false,
+                createdAt: new Date()
+            };
+            userSessions.push(session);
+        }
+        
         res.json({ 
             checkedInToday: !!alreadyCheckedIn,
-            checkInTime: alreadyCheckedIn ? alreadyCheckedIn.checkInTime : null
+            checkInTime: alreadyCheckedIn ? alreadyCheckedIn.checkInTime : null,
+            hasStarted: session.hasStarted
         });
     } catch (error) {
         console.error('Today status error:', error);
@@ -602,9 +620,9 @@ app.use('*', (req, res) => {
     res.status(404).send('Page not found');
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 SUPER CHAT running on port ${PORT}`);
-    console.log(`📍 Access: http://localhost:${PORT}`);
+    console.log(`📍 Access: http://0.0.0.0:${PORT}`);
     console.log(`🎯 Features: Chat History, Leaderboard, Referrals, Notifications!`);
 });
