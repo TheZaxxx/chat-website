@@ -1,5 +1,11 @@
 // frontend/js/chat.js
 class ChatManager {
+    state = {
+    signed: false,
+    waitingSignature: true,
+    waitingCheckIn: false,
+    historyLoaded: false
+};
     constructor() {
         // safe selectors (match dashboard.html)
         this.chatMessages = document.getElementById("chatMessages");
